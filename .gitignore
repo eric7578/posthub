@@ -43,3 +43,9 @@ Contact GitHub API Training Shop Blog About
 
 # Release folder
 dist
+
+# config json
+config.json
+
+# test db
+:memory
