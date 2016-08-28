@@ -9,10 +9,10 @@ export default function validate(...schemas) {
           if (!schema) {
             return undefined;
           } else if (typeof schema.validate !== 'function') {
-            schema = joi.object().keys(schema);
+            schema = joi.object(schema).default();
           }
 
-          const { error, value } = schema.validate(args[index], {
+          const { error, value } = joi.validate(args[index], schema, {
             stripUnknown: true,
             allowUnknown: true
           });

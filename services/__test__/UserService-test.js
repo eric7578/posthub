@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import UserService from '../UserService';
 
 const userService = new UserService();
@@ -15,9 +16,9 @@ describe('UserService', () => {
 
       return userService.regist(registData)
       .then(registResult => {
-        registResult.username.should.be.equal(registData.displayName);
-        registResult.identities.should.have.lengthOf(1);
-        registResult.identities[0].mail.should.be.equal(registData.mail);
+        expect(registResult.username).to.be.equal(registData.displayName);
+        expect(registResult.identities).to.have.lengthOf(1);
+        expect(registResult.identities[0].mail).to.be.equal(registData.mail);
       });
     });
 
@@ -28,7 +29,7 @@ describe('UserService', () => {
         displayName: 'somebody'
       };
 
-      return userService.regist(registData).should.be.rejectedWith('User exist');
+      return expect(userService.regist(registData)).to.be.rejectedWith('User exist');
     });
 
   });
@@ -43,9 +44,9 @@ describe('UserService', () => {
 
        return userService.login(loginData)
        .then(loginResult => {
-         loginResult.username.should.be.equal('somebody');
-         loginResult.identities.should.have.lengthOf(1);
-         loginResult.identities[0].mail.should.be.equal(loginData.mail);
+         expect(loginResult.username).to.be.equal('somebody');
+         expect(loginResult.identities).to.have.lengthOf(1);
+         expect(loginResult.identities[0].mail).to.be.equal(loginData.mail);
        });
     });
 
@@ -55,7 +56,7 @@ describe('UserService', () => {
          password: 'password',
        };
 
-       return userService.login(loginData).should.be.rejectedWith('User not found');
+       return expect(userService.login(loginData)).to.be.rejectedWith('User not found');
     });
 
     it('should be rejected with wrong password', () => {
@@ -64,7 +65,7 @@ describe('UserService', () => {
          password: 'notcorrect',
        };
 
-       return userService.login(loginData).should.be.rejectedWith('Invalid password');
+       return expect(userService.login(loginData)).to.be.rejectedWith('Invalid password');
     });
 
   });
