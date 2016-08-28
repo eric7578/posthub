@@ -30,7 +30,7 @@ export default (sequelize, DataTypes) => sequelize.define('User', {
     },
 
     toResponseJSON(...identities) {
-      const { id, ...responseData } = this.toJSON();
+      const { ...responseData } = this.toJSON();
       responseData.identities = identities.map(identity => {
         if (identity.userId === this.id) {
           return identity.toResponseJSON();
