@@ -3,7 +3,7 @@ import joi from 'joi';
 import validate from '../utils/validate';
 import { User, MailIdentity } from '../models';
 
-export default class UserService {
+export default {
 
   @validate({
     mail: joi.string().email().required(),
@@ -31,7 +31,7 @@ export default class UserService {
     });
 
     return user.toResponseJSON(identity);
-  }
+  },
 
   @validate({
     mail: joi.string().email().required(),

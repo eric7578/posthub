@@ -1,6 +1,4 @@
-import UserService from '../services/UserService';
-
-const userService = new UserService();
+import userService from '../services/user';
 
 before(done => {
 
@@ -13,5 +11,5 @@ before(done => {
     global.defaultUser = registData;
     done();
   });
-  
+
 });

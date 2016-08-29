@@ -1,9 +1,8 @@
 import { expect } from 'chai';
-import UserService from '../UserService';
 
-const userService = new UserService();
+import userService from '../user';
 
-describe('UserService', () => {
+describe('userService', () => {
 
   describe('#regist', () => {
 
