@@ -18,6 +18,25 @@ export default {
   },
 
   @validate({
+    parentId: joi.number().required(),
+    title: joi.string().default('Untitled')
+  })
+  async createSub(props) {
+    const parent = await Entity.findById(props.parentId);
+    if (!parent) {
+      throw new Error('Parent not found');
+    }
+
+    const entity = await Entity.create({
+      parentId: parent.id,
+      title: props.title,
+      level: parent.level + 1
+    });
+
+    return entity.toResponseJSON();
+  },
+
+  @validate({
     entityId: joi.number().required(),
     userId: joi.number().required(),
     permission: joi.number().default(0)
