@@ -6,7 +6,7 @@ import { Entity, User, Permission } from '../models';
 export default {
 
   @validate({
-    title: joi.string().default('Untitled')
+    title: joi.string().default('Untitled').label('title')
   })
   async createRoot(props) {
     const entity = await Entity.create({
@@ -18,8 +18,8 @@ export default {
   },
 
   @validate({
-    parentId: joi.number().required(),
-    title: joi.string().default('Untitled')
+    parentId: joi.number().required().label('parentId'),
+    title: joi.string().default('Untitled').label('title')
   })
   async createSub(props) {
     const parent = await Entity.findById(props.parentId);
@@ -36,10 +36,59 @@ export default {
     return entity.toResponseJSON();
   },
 
+  @validate(joi.number().required().label('parentId'))
+  async getChildren(parentId) {
+    const entry = await Entity.findById(parentId);
+    if (!entry) {
+      throw new Error('Entity not found');
+    }
+
+    const childrenSet = {};
+    const children = await Entity.findAll({
+      where: {
+        parentId: entry.id
+      }
+    });
+
+    children.forEach(child => childrenSet[child.id] = child.toResponseJSON());
+    return childrenSet;
+  },
+
+  @validate(joi.number().required().label('entryId'))
+  async getFlattenTree(entryId) {
+    const entry = await Entity.findById(entryId);
+    if (!entry) {
+      throw new Error('Entity not found');
+    }
+
+    const tree = {
+      root: entry.toResponseJSON()
+    };
+
+    let cursorEntity = entry;
+    let entities = [];
+    do {
+      const subEntities = await Entity.findAll({
+        where: {
+          parentId: cursorEntity.id
+        }
+      });
+
+      subEntities.forEach(subEntity => {
+        tree[subEntity.id] = subEntity.toResponseJSON()
+      });
+
+      entities = entities.concat(subEntities);
+      cursorEntity = entities.pop();
+    } while (!!cursorEntity)
+
+    return tree;
+  },
+
   @validate({
-    entityId: joi.number().required(),
-    userId: joi.number().required(),
-    permission: joi.number().default(0)
+    entityId: joi.number().required().label('entityId'),
+    userId: joi.number().required().label('userId'),
+    permission: joi.number().default(0).label('permission')
   })
   async setPermission(permissionProps) {
     const [entity, user] = await Promise.all([
@@ -66,7 +115,7 @@ export default {
     return true;
   },
 
-  @validate(joi.number().required())
+  @validate(joi.number().required().label('entityId'))
   async getParticipants(entityId) {
     const permissions = await Permission.findAll({
       where: {
