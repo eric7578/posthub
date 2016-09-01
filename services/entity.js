@@ -83,57 +83,6 @@ export default {
     } while (!!cursorEntity)
 
     return tree;
-  },
-
-  @validate({
-    entityId: joi.number().required().label('entityId'),
-    userId: joi.number().required().label('userId'),
-    permission: joi.number().default(0).label('permission')
-  })
-  async setPermission(permissionProps) {
-    const [entity, user] = await Promise.all([
-      Entity.findById(permissionProps.entityId),
-      User.findById(permissionProps.userId)
-    ]);
-
-    if (!entity) {
-      throw new Error('Entity not found');
-    } else if (!user) {
-      throw new Error('User not found');
-    }
-
-    await Permission.findOrCreate({
-      where: {
-        entityId: entity.id,
-        userId: user.id
-      },
-      defaults: {
-        auth: permissionProps.permission
-      }
-    });
-
-    return true;
-  },
-
-  @validate(joi.number().required().label('entityId'))
-  async getParticipants(entityId) {
-    const permissions = await Permission.findAll({
-      where: {
-        entityId
-      }
-    });
-
-    const participants = [];
-    for (let i = 0; i < permissions.length; i++) {
-      const permission = permissions[i];
-      const user = await permission.getUser();
-      participants[i] = {
-        ...user.toResponseJSON(),
-        permission: permission.auth
-      };
-    }
-
-    return participants;
   }
 
 };

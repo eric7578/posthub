@@ -1,11 +1,11 @@
 import joi from 'joi';
 
 export default function validate(...schemas) {
-  const validators = schemas.map(schema => {
+  const validators = schemas.map((schema, index) => {
     if (typeof schema.validate === 'function') {
       return schema;
     } else if (typeof schema === 'object') {
-      return joi.object(schema).default();
+      return joi.object(schema).default().label(`argument ${index}`);
     } else {
       return joi.any().allow(schema);
     }
