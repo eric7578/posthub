@@ -1,11 +1,13 @@
 import fs from 'fs';
+import ini from 'ini';
 import path from 'path';
 import Sequelize from 'sequelize';
 import cls from 'continuation-local-storage';
 
 const env = process.env.NODE_ENV || 'development';
-const configPath = path.join(__dirname, '../config.json');
-const config = JSON.parse(fs.readFileSync(configPath, 'utf8'))[env];
+const configPath = path.join(__dirname, '../.config');
+const config = ini.parse(fs.readFileSync(configPath, 'utf8'))[env].database;
+console.log(config)
 const db = {};
 
 const namespace = cls.createNamespace('project-engine.models.transaction');
