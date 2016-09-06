@@ -5,50 +5,15 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import colors from 'colors';
 import http from 'http';
-import { GraphQLObjectType, GraphQLString, GraphQLSchema } from 'graphql';
-import graphqlHttp from 'express-graphql';
 
-import routes from 'routes/index';
-
-var data = require('./data.json');
-
-var userType = new GraphQLObjectType({
-  name: 'User',
-  fields: {
-    id: { type: GraphQLString },
-    name: { type: GraphQLString },
-  }
-});
-
-var schema = new GraphQLSchema({
-  query: new GraphQLObjectType({
-    name: 'Query',
-    fields: {
-      user: {
-        type: userType,
-        // `args` describes the arguments that the `user` query accepts
-        args: {
-          id: { type: GraphQLString }
-        },
-        // The resolve function describes how to "resolve" or fulfill
-        // the incoming query.
-        // In this case we use the `id` argument from above as a key
-        // to get the User from `data`
-        resolve: function (_, args) {
-          return data[args.id];
-        }
-      }
-    }
-  })
-});
-
-
+import routes from './routes/index';
 
 const port = process.env.PORT || '3000';
 const app = express();
 
 app.set('port', port);
 
+app.use(express.static('public'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -56,11 +21,7 @@ app.use(cookieParser());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-// app.use('/', routes);
-app.use('/graphql', graphqlHttp({
-  schema,
-  pretty: true
-}));
+app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

@@ -47,5 +47,8 @@ dist
 # config
 .config
 
+# public folder
+public/javascripts
+
 # test db
 :memory
