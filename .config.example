@@ -1,16 +1,15 @@
 [development.database]
 username=root
-database=database_development
+schema=database_development
 host=127.0.0.1
 dialect=mysql
 
 [development.redis]
 host=127.0.0.1
-port=3579
+port=6379
 
 [test.database]
 username=root
-database=database_test
 host=127.0.0.1
 dialect=sqlite
 storage=:memory:
@@ -18,4 +17,4 @@ logging=false
 
 [test.redis]
 host=127.0.0.1
-port=3579
+port=6379

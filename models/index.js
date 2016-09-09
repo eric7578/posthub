@@ -4,20 +4,18 @@ import path from 'path';
 import Sequelize from 'sequelize';
 import cls from 'continuation-local-storage';
 
-const env = process.env.NODE_ENV || 'development';
-const configPath = path.join(__dirname, '../.config');
-const config = ini.parse(fs.readFileSync(configPath, 'utf8'))[env].database;
-console.log(config)
-const db = {};
+import { database } from '../config.js';
 
+const db = {};
 const namespace = cls.createNamespace('project-engine.models.transaction');
 Sequelize.cls = namespace;
 
-if (config.use_env_variable) {
-  var sequelize = new Sequelize(process.env[config.use_env_variable]);
-} else {
-  var sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
+const sequelize = new Sequelize(
+  database.schema,
+  database.username,
+  database.password,
+  database
+);
 
 fs.readdirSync(__dirname)
   .filter(file => (
