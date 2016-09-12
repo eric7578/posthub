@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "start": "nodemon server.js --exec babel-node --ignore './components' --ignore './public'",
+    "start2": "nodemon ./services/message.js",
     "build": "babel server.js -d dist",
     "release": "NODE_ENV=production node dist/server.js",
     "test": "NODE_ENV=test mocha ./__test__/setup.js **/__test__/**/*-test.js --colors --reporter min --compilers js:babel-register --require babel-polyfill"
   },
   "dependencies": {
+    "amqplib": "^0.4.2",
     "body-parser": "~1.15.2",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
@@ -22,7 +24,12 @@
     "joi": "^9.0.4",
     "jsonwebtoken": "^7.1.9",
     "koa": "^2.0.0-alpha.7",
+    "koa-bodyparser": "^3.2.0",
+    "koa-convert": "^1.2.0",
+    "koa-passport": "^2.2.2",
     "koa-router": "^7.0.1",
+    "koa-session": "^3.3.1",
+    "koa-views": "^5.0.2",
     "morgan": "~1.7.0",
     "mysql": "^2.11.1",
     "redis": "^2.6.2",
