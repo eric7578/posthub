@@ -8,8 +8,10 @@ import passport from 'koa-passport';
 import convert from 'koa-convert';
 import views from 'koa-views';
 import serve from 'koa-static';
+import mount from 'koa-mount';
+import graphqlHTTP from 'koa-graphql';
 
-import './views/setup.js';
+import schema from './graphql/schemas';
 
 const app = new Koa();
 const port = process.env.PORT || '3000';
@@ -26,24 +28,29 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(views(`${__dirname}/views`, {
-  map: { hbs: 'handlebars' }
-}));
-
-app.use(async (ctx, next) => {
-  ctx.state.engine = {
-    initState: {
-      user: {
-        name: 'ericyan'
+  map: { hbs: 'handlebars' },
+  options: {
+    helpers: {
+      toGlobal: context => {
+        const vars = [];
+        for (let varName in context) {
+          vars.push(`window.${varName}=${JSON.stringify(context[varName])};`);
+        }
+        return ';' + vars.join('');
       }
     }
-  };
-  await next();
-});
+  }
+}));
 
-import React from 'react';
-import ssr from './utils/ssr.js';
-import Index from './views/index/Index.jsx';
-app.use(ssr(<Index />, 'index'));
+app.use(mount('/graphql', graphqlHTTP({
+  schema,
+  graphiql: true,
+})));
+
+// import React from 'react';
+// import ssr from './utils/ssr.js';
+// import Index from './views/index/Index.jsx';
+// app.use(ssr(<Index />, 'index'));
 
 app.listen(port, onListening);
 
