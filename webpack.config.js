@@ -7,7 +7,6 @@ module.exports = {
       'react',
       'redux',
       'react-redux',
-      'redux-saga',
       'react-css-modules',
       'whatwg-fetch',
       'es6-promise'

@@ -8,7 +8,6 @@ promise.polyfill();
 
 import "normalize.css";
 
-import saga from '../views/saga';
 import configureStore from '../views/redux/configureStore';
 
 export function mount(component) {
@@ -24,7 +23,6 @@ export function mountContainer(component, initState) {
   }
 
   const store = configureStore(initState);
-  store.runSaga(saga);
   const provider = (
     <Provider store={store}>
       {component}
