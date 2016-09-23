@@ -2,6 +2,7 @@ import 'whatwg-fetch';
 import 'babel-polyfill';
 
 import Koa from 'koa';
+import router from 'koa-router';
 import bodyParser from 'koa-bodyparser';
 import session from 'koa-session';
 import passport from 'koa-passport';
@@ -47,10 +48,8 @@ app.use(mount('/graphql', graphqlHTTP({
   graphiql: true,
 })));
 
-// import React from 'react';
-// import ssr from './utils/ssr.js';
-// import Index from './views/index/Index.jsx';
-// app.use(ssr(<Index />, 'index'));
+import index from './routes/index.js';
+app.use(index.routes());
 
 app.listen(port, onListening);
 

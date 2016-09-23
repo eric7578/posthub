@@ -6,13 +6,14 @@ import configureStore from '../views/redux/configureStore';
 
 export function ssr(component, entry, template = 'react.hbs') {
   return async function (ctx, next) {
-    await ctx.rener(template, {
+    await ctx.render(template, {
+      entry,
       reactContent: renderToString(component)
     });
   }
 }
 
-export function ssrContainer(componetn, entry, template='react.hbs') {
+export function ssrContainer(component, entry, template='react.hbs') {
   return async function (ctx, next) {
     const { engine } = ctx.state;
     if (!engine || !engine.initState) {

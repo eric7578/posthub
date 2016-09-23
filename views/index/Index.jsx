@@ -1,9 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 
+import RegistForm from '../components/RegistForm.jsx';
+
 export default class Index extends Component {
   render() {
     return (
-      <h1>{`Hello`}</h1>
+      <RegistForm />
     );
   }
 }

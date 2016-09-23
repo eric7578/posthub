@@ -1,9 +1,10 @@
-var express = require('express');
-var router = express.Router();
+import React from 'react';
+import Router from 'koa-router';
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+import { ssr } from '../utils/ssr.js';
+import Index from '../views/index/Index.jsx';
 
-module.exports = router;
+const router = Router();
+router.get('/', ssr(<Index />, 'index'));
+
+export default router;
