@@ -1,3 +1,6 @@
-import setupChai from './setup-chai.js';
-import setupSequelize from './setup-sequelize.js';
-import setupSeed from './setup-seed.js';
+import chai from 'chai';
+import spy from 'chai-spies';
+import promise from 'chai-as-promised';
+
+chai.use(spy);
+chai.use(promise);

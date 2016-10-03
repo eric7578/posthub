@@ -8,10 +8,11 @@
     "start:react": "nodemon --exec \"webpack\" --ignore './public' -e js,jsx",
     "build": "babel server.js -d dist",
     "release": "NODE_ENV=production node dist/server.js",
-    "test": "NODE_ENV=test mocha ./__test__/setup.js **/__test__/**/*-test.js --colors --reporter min --compilers js:babel-register --require babel-polyfill"
+    "test": "NODE_ENV=test mocha ./__test__/setup.js **/__test__/**/*_test.js --colors --compilers js:babel-register --require babel-polyfill"
   },
   "dependencies": {
     "body-parser": "~1.15.2",
+    "cls-bluebird": "^2.0.1",
     "colors": "^1.1.2",
     "continuation-local-storage": "^3.2.0",
     "graphql": "^0.7.0",
@@ -19,6 +20,7 @@
     "hbs": "^4.0.1",
     "ini": "^1.3.4",
     "joi": "^9.0.4",
+    "knex": "^0.12.1",
     "koa": "^2.0.0-alpha.7",
     "koa-bodyparser": "^3.2.0",
     "koa-convert": "^1.2.0",
