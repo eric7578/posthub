@@ -1,19 +1,21 @@
 import assert from 'assert';
 
-import { createWithMail, findByMail, encrypt } from '../models/users.js';
+import { findByMail, create } from '../models\/mailIdentity.js';
+import { compare, encrypt } from '../models\/cryptoPassword.js';
 
-export async function regist(mail, pwd) {
-  const user = await findByMail(mail);
-  assert.equal(user, null, 'User exist');
-  return await createWithMail(mail, pwd);
-}
-
-export async function login(mail, pwd) {
+export async function loginMailIdentity(mail, password) {
   const user = await findByMail(mail);
   assert.ok(user, 'User not found');
 
-  const { password, salt } = user;
-  const encryptPassword = encrypt(pwd, salt).password;
-  assert.equal(encryptPassword, password, 'Invalid password');
+  const isPasswordCorrect = await compare(password, user.password);
+  assert.ok(isPasswordCorrect, 'Invalid password');
+
   return user;
+}
+
+export async function registMailIdentity(mail, password) {
+  const user = await findByMail(mail);
+  assert.deepEqual(user, null, 'User exist');
+  const hash = await encrypt(password);
+  return await create(mail, hash);
 }

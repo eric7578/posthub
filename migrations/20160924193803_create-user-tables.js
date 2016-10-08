@@ -13,7 +13,6 @@ exports.up = function(knex, Promise) {
       t.foreign('userId').references('users.id');
       t.string('mail').notNullable().unique();
       t.string('password').notNullable();
-      t.string('salt').notNullable();
     })
   );
 };
