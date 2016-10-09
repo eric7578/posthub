@@ -1,28 +1,37 @@
 import assert from 'assert';
 
-import * as entities from '../models/entities.js';
-import * as permissions from '../models/permissions.js';
-import * as users from '../models/users.js';
+import * as entity from '../models/entity.js';
+import * as permission from '../models/permission.js';
+import * as mailIdentity from '../models/mailIdentity.js';
 import { OWNER, EDITOR, READER } from '../models/permissionSamples.js';
 import { isSet } from '../utils/bitop.js';
 
 export async function createOrigin(user, title) {
-  const origin = await entities.createRoot(title);
-  await permissions.grant(user.userId, origin.entityId, ...OWNER);
+  const origin = await entity.createRoot(title);
+  await permission.grant(user.userId, origin.entityId, ...OWNER);
   return {
     ...origin,
   };
 }
 
+export async function joinOrigin(user, origin) {
+  assert.equal(origin.level, 0, 'Should be root level');
+  await permission.grant(user.userId, origin.entityId, ...EDITOR);
+}
+
+export async function inOrigin(user, origin) {
+  return await permission.isGranted(user.userId, origin.entityId, ...EDITOR);
+}
+
 export async function listOrigins(user) {
   const origins = [];
   const { userId } = user;
-  const ps = await permissions.findByUserId(userId);
+  const ps = await permission.findByUserId(userId);
   for (let i = 0; i < ps.length; i++) {
     const { entityId } = ps[i];
-    const isAllow = await permissions.isGranted(userId, entityId, ...READER);
+    const isAllow = await permission.isGranted(userId, entityId, ...EDITOR);
     if (isAllow) {
-      const origin = await entities.findByEntityId(entityId);
+      const origin = await entity.findByEntityId(entityId);
       origins.push(origin);
     }
   }
@@ -30,20 +39,11 @@ export async function listOrigins(user) {
   return origins;
 }
 
-export async function joinOrigin(user, origin) {
-  assert.equal(origin.level, 0, 'Should be root level');
-  await permissions.grant(user.userId, origin.entityId, ...OWNER);
-}
-
-export async function isJoinOrigin(user, origin) {
-  return await permissions.isGranted(user.userId, origin.entityId, ...OWNER);
-}
-
-export async function listJoins(origin) {
-  const ps = await permissions.findByEntityId(origin.entityId);
+export async function listOriginMembers(origin) {
+  const ps = await permission.findByEntityId(origin.entityId);
   const joins = await Promise.all(
-    ps.filter(p => isSet(p.auth, ...OWNER))
-      .map(p => users.findByUserId(p.userId))
+    ps.filter(p => isSet(p.auth, ...EDITOR))
+      .map(p => mailIdentity.findByUserId(p.userId))
   );
   return joins;
 }
