@@ -1,7 +1,29 @@
 import assert from 'assert';
 
-import * as entities from '../models/entities.js';
-import { isJoinOrigin } from './origin.js';
+import * as entity from '../models/entity.js';
+import { inOrigin } from './origin.js';
+
+export async function makeCommit(user, title, parent) {
+  if (!!parent) {
+    return await entity.create(parent.entityId, title);
+  } else {
+    return await entity.createRoot(title);
+  }
+}
+
+export async function enhanceCommit(user, origin, entity, enhancers) {
+  const isGranted = await inOrigin(user, origin);
+  assert.ok(isGranted, 'Permission denied');
+
+  for (let enhancer in enhancers) {
+    const enhacedResult = await enhancers[enhancer](entity);
+    entity = Object.assign(entity, {
+      [enhancer]: enhacedResult
+    });
+  }
+
+  return entity;
+}
 
 export async function createCommit(user, origin, parent = null, title) {
   const isGranted = await isJoinOrigin(user, origin);
