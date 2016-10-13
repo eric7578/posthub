@@ -11,10 +11,7 @@ export async function makeCommit(user, title, parent) {
   }
 }
 
-export async function enhanceCommit(user, origin, entity, enhancers) {
-  const isGranted = await inOrigin(user, origin);
-  assert.ok(isGranted, 'Permission denied');
-
+export async function enhanceCommit(entity, enhancers) {
   for (let enhancer in enhancers) {
     const enhacedResult = await enhancers[enhancer](entity);
     entity = Object.assign(entity, {

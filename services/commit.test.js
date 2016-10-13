@@ -49,8 +49,6 @@ describe('commit', () => {
   describe('#enhanceCommit', () => {
 
     it('should decorate assign decorators to entity', async () => {
-      const user = { userId: 1 };
-      const originEntity = { entityId: 2 };
       const entity = { entityId: 3 };
       const enhancers = {
         enhancerFn1: spy(() => ({ enhancerId: 2 })),
@@ -58,9 +56,7 @@ describe('commit', () => {
       };
       origin.inOrigin = spy(() => true);
 
-      const enhancedEntity = await service.enhanceCommit(user, originEntity, entity, enhancers);
-
-      expect(origin.inOrigin).to.have.been.called.once.with.exactly(user, originEntity);
+      const enhancedEntity = await service.enhanceCommit(entity, enhancers);
       expect(enhancers.enhancerFn1).to.have.been.called.once.with.exactly(entity);
       expect(enhancers.enhancerFn2).to.have.been.called.once.with.exactly(entity);
       expect(enhancedEntity).to.be.deep.equal({
@@ -72,15 +68,6 @@ describe('commit', () => {
           enhancerFn2Props: 'some enhance'
         },
       })
-    });
-
-    it('should be rejected if user is without granted', async () => {
-      const user = { userId: 1 };
-      const originEntity = { entityId: 2 };
-      origin.inOrigin = spy(() => false);
-
-      await expect(service.enhanceCommit(user, originEntity)).to.be.rejectedWith('Permission denied');
-      expect(origin.inOrigin).to.have.been.called.once.with.exactly(user, originEntity);
     });
 
   });
