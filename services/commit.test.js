@@ -5,71 +5,97 @@ import { OWNER, EDITOR } from '../models/permissionSamples.js';
 import { set } from '../utils/bitop.js';
 
 describe('commit', () => {
-
   let permission, entity, mailIdentity, origin, service;
+  const userObj = { userId: 1 };
+  const entityObj = { entityId: 2 };
+  const parentObj = { entityId: 3 };
 
   beforeEach(() => {
     permission = {};
     mailIdentity = {};
     entity = {};
-    origin = {};
     service = proxyquire('./commit.js', {
       '../models/permission.js': permission,
       '../models/mailIdentity.js': mailIdentity,
       '../models/entity.js': entity,
-      './origin.js': origin,
     });
   });
 
   describe('#makeCommit', () => {
-
     it('should create new root if without parentId', async () => {
-      const user = { userId: 1 };
-      const title = 'new root';
-      entity.createRoot = spy();
+      entity.createRoot = spy(() => entityObj);
+      permission.grant = spy();
+      const ret = await service.makeCommit(userObj, 'new root');
 
-      const origin = await service.makeCommit(user, title);
-
-      expect(entity.createRoot).to.have.been.called.with.exactly(title);
+      expect(entity.createRoot).to.have.been.called.once.with.exactly('new root');
+      expect(permission.grant).to.have.been.called.once.with.exactly(userObj.userId, entityObj.entityId, ...OWNER);
+      expect(ret).to.be.deep.equal(entityObj);
     });
 
     it('should create new sub-commit with parentId', async () => {
-      const user = { userId: 1 };
-      const parent = { entityId: 2 };
-      const title = 'new root';
-      entity.create = spy();
+      permission.find = spy(() => ({ isGranted: () => true }));
+      entity.create = spy(() => entityObj);
+      permission.grant = spy();
+      const ret = await service.makeCommit(userObj, 'new root', parentObj);
 
-      const origin = await service.makeCommit(user, title, parent);
-
-      expect(entity.create).to.have.been.called.with.exactly(parent.entityId, title);
+      expect(permission.find).to.have.been.called.once.with.exactly(userObj.userId, parentObj.entityId);
+      expect(entity.create).to.have.been.called.once.with.exactly(parentObj.entityId, 'new root');
+      expect(permission.grant).to.have.been.called.once.with.exactly(userObj.userId, entityObj.entityId, ...OWNER);
+      expect(ret).to.be.deep.equal(entityObj);
     });
-
   });
 
-  describe('#enhanceCommit', () => {
+  describe('#joinCommit', () => {
+    it('should grant user as EDITOR', async () => {
+      permission.grant = spy();
+      await service.joinCommit(userObj, entityObj);
 
-    it('should decorate assign decorators to entity', async () => {
-      const entity = { entityId: 3 };
-      const enhancers = {
-        enhancerFn1: spy(() => ({ enhancerId: 2 })),
-        enhancerFn2: spy(() => ({ enhancerFn2Props: 'some enhance' })),
-      };
-      origin.inOrigin = spy(() => true);
-
-      const enhancedEntity = await service.enhanceCommit(entity, enhancers);
-      expect(enhancers.enhancerFn1).to.have.been.called.once.with.exactly(entity);
-      expect(enhancers.enhancerFn2).to.have.been.called.once.with.exactly(entity);
-      expect(enhancedEntity).to.be.deep.equal({
-        entityId: 3,
-        enhancerFn1: {
-          enhancerId: 2
-        },
-        enhancerFn2: {
-          enhancerFn2Props: 'some enhance'
-        },
-      })
+      expect(permission.grant).to.have.been.called.once.with.exactly(userObj.userId, entityObj.entityId, ...EDITOR);
     });
-
   });
 
+  describe('#listMembers', () => {
+    it('should list all members with EDITOR permission', async () => {
+      permission.find = spy(() => ({ isGranted: () => true }));
+      permission.findByEntityId = spy(() => ([
+        { userId: 5, isGranted: () => true },
+        { userId: 6, isGranted: () => true },
+        { userId: 7, isGranted: () => false }
+      ]));
+      mailIdentity.findByUserId = spy();
+      await service.listMembers(userObj, entityObj);
+
+      expect(permission.find).to.have.been.called.once.with.exactly(userObj.userId, entityObj.entityId);
+      expect(permission.findByEntityId).to.have.been.called.once.with.exactly(entityObj.entityId);
+      expect(mailIdentity.findByUserId).to.have.been.called.twice.with.exactly(5);
+      expect(mailIdentity.findByUserId).to.have.been.called.twice.with.exactly(6);
+    });
+  });
+
+  describe('#listMemberParticipated', () => {
+    it('should list all member\'s participated commits', async () => {
+      permission.findByUserId = spy(() => ([
+        { entityId: 5, isGranted: () => true },
+        { entityId: 6, isGranted: () => true },
+        { entityId: 7, isGranted: () => false }
+      ]));
+      entity.findByEntityId = spy();
+      await service.listMemberParticipated(userObj);
+
+      expect(permission.findByUserId).to.have.been.called.once.with.exactly(userObj.userId);
+      expect(entity.findByEntityId).to.have.been.called.twice.with.exactly(5);
+      expect(entity.findByEntityId).to.have.been.called.twice.with.exactly(6);
+    });
+  });
+
+  describe('#checkoutBranchedCommits', () => {
+    it('should find all sub-commits', async () => {
+      permission.find = spy(() => ({ isGranted: () => true }));
+      entity.findByParentId = spy();
+      await service.checkoutBranchedCommits(userObj, entityObj);
+
+      expect(permission.find).to.have.been.called.once.with.exactly(userObj.userId, entityObj.entityId);
+      expect(entity.findByParentId).to.have.been.called.once.with.exactly(entityObj.entityId);
+    });
+  });
 });

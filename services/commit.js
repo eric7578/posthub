@@ -1,52 +1,57 @@
 import assert from 'assert';
 
-import * as entity from '../models/entity.js';
-import { inOrigin } from './origin.js';
+import * as mailIdentityModel from '../models/mailIdentity.js';
+import * as entityModel from '../models/entity.js';
+import * as permissionModel from '../models/permission.js';
+import { READER, EDITOR, OWNER } from '../models/permissionSamples.js';
 
-export async function makeCommit(user, title, parent) {
+export async function makeCommit(user, message, parent) {
   if (!!parent) {
-    return await entity.create(parent.entityId, title);
+    const permission = await permissionModel.find(user.userId, parent.entityId);
+    assert.ok(await permission.isGranted(...EDITOR), 'Permission denied');
+    const commit = await entityModel.create(parent.entityId, message);
+    await permissionModel.grant(user.userId, commit.entityId, ...OWNER);
+    return commit;
   } else {
-    return await entity.createRoot(title);
+    const root = await entityModel.createRoot(message);
+    await permissionModel.grant(user.userId, root.entityId, ...OWNER);
+    return root;
   }
 }
 
-export async function enhanceCommit(entity, enhancers) {
-  for (let enhancer in enhancers) {
-    const enhacedResult = await enhancers[enhancer](entity);
-    entity = Object.assign(entity, {
-      [enhancer]: enhacedResult
-    });
+export async function joinCommit(user, entity) {
+  await permissionModel.grant(user.userId, entity.entityId, ...EDITOR);
+}
+
+export async function listMembers(user, entity) {
+  const permission = await permissionModel.find(user.userId, entity.entityId);
+  assert.ok(permission.isGranted(...READER), 'Permission denied');
+
+  const permissions = await permissionModel.findByEntityId(entity.entityId);
+  const users = [];
+  for (let p of permissions) {
+    if (p.isGranted(...EDITOR)) {
+      const user = await mailIdentityModel.findByUserId(p.userId);
+      users.push(user);
+    }
   }
-
-  return entity;
+  return users;
 }
 
-export async function createCommit(user, origin, parent = null, title) {
-  const isGranted = await isJoinOrigin(user, origin);
-  assert.ok(isGranted, 'Permission denied');
-
-  parent = parent || origin;
-  const commit = await entities.create(parent.entityId, title);
-  return commit;
+export async function listMemberParticipated(user) {
+  const permissions = await permissionModel.findByUserId(user.userId);
+  const entities = [];
+  for (let p of permissions) {
+    if (p.isGranted(...EDITOR)) {
+      const entity = await entityModel.findByEntityId(p.entityId);
+      entities.push(entity);
+    }
+  }
+  return entities;
 }
 
-export async function checkoutCommit(user, origin, commit = null) {
-  const isGranted = await isJoinOrigin(user, origin);
-  assert.ok(isGranted, 'Permission denied');
-
-  commit = commit || origin;
-  const c = await entities.findByEntityId(commit.entityId);
-  return c;
-}
-
-export async function checkoutBranchedCommits(user, origin, commit = null) {
-  const isGranted = await isJoinOrigin(user, origin);
-  assert.ok(isGranted, 'Permission denied');
-
-  const c = await entities.findByEntityId(commit.entityId);
-  assert.ok(c, `Commit(${commit.entityId}) not found`);
-
-  const commits = await entities.findByParentId(c.entityId);
-  return commits;
+export async function checkoutBranchedCommits(user, parent, commit = null) {
+  const permission = await permissionModel.find(user.userId, parent.entityId);
+  assert.ok(permission.isGranted(...READER), 'Permission denied');
+  return await entityModel.findByParentId(parent.entityId);
 }
