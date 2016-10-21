@@ -3,14 +3,13 @@ import { expect } from 'chai';
 import knex from './knex.js';
 import * as mailIdentity from './mailIdentity.js';
 import * as entity from './entity.js';
-import { grant, isGranted, provoke, provokeAll } from './permission.js';
-import { ACCESS, MODIFY, REMOVE, EDITOR } from './permissionSamples.js';
+import { grant, provoke, provokeAll, findByEntityId, findByUserId, find } from './permission.js';
+import { ACCESS, MODIFY, REMOVE, READER, EDITOR, OWNER } from './permissionSamples.js';
 
 describe('permission', () => {
-
   const mail = 'somebody@mail.com';
   const password = 'password';
-  let user, root;
+  let user, root, permission;
 
   before(async () => {
     await knex.migrate.latest();
@@ -22,47 +21,68 @@ describe('permission', () => {
     await knex.migrate.rollback();
   });
 
-  beforeEach(async () => {
-    await grant(user.userId, root.entityId, ...EDITOR);
-  });
-
   afterEach(async () => {
     await provokeAll(user.userId, root.entityId);
   });
 
-  describe('#isGranted', () => {
-
-    it('should grant user\'s ACCESS, MODIFY', async () => {
-      const isEditor = await isGranted(user.userId, root.entityId, ACCESS, MODIFY);
-      const removed = await isGranted(user.userId, root.entityId, REMOVE);
-      expect(isEditor).to.be.true;
-      expect(removed).to.be.false;
+  describe('#grant', () => {
+    it('should generate permission with give authorizations', async () => {
+      const permission = await grant(user.userId, root.entityId, ...EDITOR);
+      expect(permission.isGranted(ACCESS)).to.be.true;
+      expect(permission.isGranted(MODIFY)).to.be.true;
+      expect(permission.isGranted(REMOVE)).to.be.false;
+      expect(permission.isGranted(...READER)).to.be.true;
+      expect(permission.isGranted(...EDITOR)).to.be.true;
+      expect(permission.isGranted(...OWNER)).to.be.false;
     });
-
   });
 
-  describe('#provoke / #provokeAll', () => {
-
+  describe('#provoke', () => {
     it('should provoke specificated granted', async () => {
-      await provoke(user.userId, root.entityId, MODIFY);
-      const isAccess = await isGranted(user.userId, root.entityId, ACCESS);
-      const isModify = await isGranted(user.userId, root.entityId, MODIFY);
-      const isRemove = await isGranted(user.userId, root.entityId, REMOVE);
-      expect(isAccess).to.be.true;
-      expect(isModify).to.be.false;
-      expect(isRemove).to.be.false;
+      await grant(user.userId, root.entityId, ...EDITOR);
+      const permission = await provoke(user.userId, root.entityId, MODIFY);
+      expect(permission.isGranted(ACCESS)).to.be.true;
+      expect(permission.isGranted(MODIFY)).to.be.false;
+      expect(permission.isGranted(REMOVE)).to.be.false;
     });
-
-    it('should provoke all granted', async () => {
-      await provokeAll(user.userId, root.entityId);
-      const isAccess = await isGranted(user.userId, root.entityId, ACCESS);
-      const isModify = await isGranted(user.userId, root.entityId, MODIFY);
-      const isRemove = await isGranted(user.userId, root.entityId, REMOVE);
-      expect(isAccess).to.be.false;
-      expect(isModify).to.be.false;
-      expect(isRemove).to.be.false;
-    });
-
   });
 
+  describe('#provokeAll', () => {
+    it('should provoke all granted', async () => {
+      await grant(user.userId, root.entityId, ...EDITOR);
+      const permission = await provokeAll(user.userId, root.entityId);
+      expect(permission.isGranted(ACCESS)).to.be.false;
+      expect(permission.isGranted(MODIFY)).to.be.false;
+      expect(permission.isGranted(REMOVE)).to.be.false;
+    });
+  });
+
+  describe('#findByEntityId', () => {
+    it('should find all permission with entityId', async () => {
+      const permissions = await findByEntityId(root.entityId);
+      expect(permissions).to.have.lengthOf(1);
+      expect(permissions[0].permissionId).to.be.a('number');
+      expect(permissions[0].userId).to.be.equal(user.userId);
+      expect(permissions[0].entityId).to.be.equal(root.entityId);
+    });
+  });
+
+  describe('#findByUserId', () => {
+    it('should find all permissions with userId', async () => {
+      const permissions = await findByUserId(user.userId);
+      expect(permissions).to.have.lengthOf(1);
+      expect(permissions[0].permissionId).to.be.a('number');
+      expect(permissions[0].userId).to.be.equal(user.userId);
+      expect(permissions[0].entityId).to.be.equal(root.entityId);
+    });
+  });
+
+  describe('#find', () => {
+    it('should find one permission with userId and entityId', async () => {
+      const permission = await find(user.userId, root.entityId);
+      expect(permission.permissionId).to.be.a('number');
+      expect(permission.userId).to.be.equal(user.userId);
+      expect(permission.entityId).to.be.equal(root.entityId);
+    });
+  });
 });

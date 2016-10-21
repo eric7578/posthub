@@ -26,10 +26,12 @@ export async function grant(userId, entityId, ...authorizations) {
     .into('permissions');
   }
 
-  return {
+  return createPermission({
     permissionId: permissionsId[0],
+    userId,
+    entityId,
     auth: newAuth,
-  };
+  });
 }
 
 export async function provoke(userId, entityId, ...authorizations) {
@@ -50,10 +52,12 @@ export async function provoke(userId, entityId, ...authorizations) {
   .from('permissions')
   .where({ id });
 
-  return {
+  return createPermission({
     permissionId: id,
+    userId,
+    entityId,
     auth: newAuth,
-  };
+  });
 }
 
 export async function provokeAll(userId, entityId) {
@@ -72,35 +76,61 @@ export async function provokeAll(userId, entityId) {
   .from('permissions')
   .where({ id: permission.id });
 
-  return {
+  return createPermission({
     permissionId: permission.id,
+    userId,
+    entityId,
     auth: 0,
-  };
-}
-
-export async function isGranted(userId, entityId, ...authorizations) {
-  const permissions = await knex
-  .select('auth')
-  .from('permissions')
-  .where({ userId, entityId });
-
-  if (!!permissions[0]) {
-    return isSet(permissions[0].auth, ...authorizations);
-  } else {
-    return false;
-  }
+  });
 }
 
 export async function findByEntityId(entityId) {
-  return await knex
-  .select('userId', 'auth')
+  const permissions = await knex
+  .select('id', 'userId', 'auth')
   .from('permissions')
   .where({ entityId });
+
+  return permissions.map(p => createPermission({
+    permissionId: p.id,
+    userId: p.userId,
+    entityId,
+    auth: p.auth,
+  }));
 }
 
 export async function findByUserId(userId) {
-  return await knex
-  .select('entityId', 'auth')
+  const permissions = await knex
+  .select('id', 'entityId', 'auth')
   .from('permissions')
   .where({ userId });
+
+  return permissions.map(p => createPermission({
+    permissionId: p.id,
+    userId,
+    entityId: p.entityId,
+    auth: p.auth,
+  }));
+}
+
+export async function find(userId, entityId) {
+  const [permission] = await knex
+  .select('id', 'auth')
+  .from('permissions')
+  .where({ userId, entityId });
+
+  return createPermission({
+    permissionId: permission.id,
+    userId,
+    entityId,
+    auth: permission.auth,
+  });
+}
+
+function createPermission(permission) {
+  return {
+    ...permission,
+    isGranted(...authes) {
+      return isSet(this.auth, ...authes);
+    }
+  }
 }
