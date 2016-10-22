@@ -14,8 +14,8 @@ describe('user', () => {
       mailIdentity = {};
       cryptoPassword = {};
       serivce = proxyquire('./user.js', {
-        '../models/mailIdentity.js': mailIdentity,
-        '../models/cryptoPassword.js': cryptoPassword,
+        '../adapters/mailIdentity.js': mailIdentity,
+        '../adapters/cryptoPassword.js': cryptoPassword,
       });
     });
 
@@ -61,8 +61,8 @@ describe('user', () => {
       mailIdentity = {};
       cryptoPassword = {};
       serivce = proxyquire('./user.js', {
-        '../models/mailIdentity.js': mailIdentity,
-        '../models/cryptoPassword.js': cryptoPassword,
+        '../adapters/mailIdentity.js': mailIdentity,
+        '../adapters/cryptoPassword.js': cryptoPassword,
       });
     });
 

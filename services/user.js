@@ -1,7 +1,7 @@
 import assert from 'assert';
 
-import { findByMail, create } from '../models\/mailIdentity.js';
-import { compare, encrypt } from '../models\/cryptoPassword.js';
+import { findByMail, create } from '../adapters\/mailIdentity.js';
+import { compare, encrypt } from '../adapters\/cryptoPassword.js';
 
 export async function loginMailIdentity(mail, password) {
   const user = await findByMail(mail);

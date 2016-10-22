@@ -1,9 +1,9 @@
 import assert from 'assert';
 
-import * as mailIdentityModel from '../models/mailIdentity.js';
-import * as entityModel from '../models/entity.js';
-import * as permissionModel from '../models/permission.js';
-import { READER, EDITOR, OWNER } from '../models/permissionSamples.js';
+import * as mailIdentityModel from '../adapters/mailIdentity.js';
+import * as entityModel from '../adapters/entity.js';
+import * as permissionModel from '../adapters/permission.js';
+import { READER, EDITOR, OWNER } from '../adapters/permissionSamples.js';
 
 export async function makeCommit(user, message, parent) {
   if (!!parent) {

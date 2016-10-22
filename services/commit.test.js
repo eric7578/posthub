@@ -1,7 +1,7 @@
 import { expect, spy } from 'chai';
 import proxyquire from 'proxyquire';
 
-import { OWNER, EDITOR } from '../models/permissionSamples.js';
+import { OWNER, EDITOR } from '../adapters/permissionSamples.js';
 import { set } from '../utils/bitop.js';
 
 describe('commit', () => {
@@ -15,9 +15,9 @@ describe('commit', () => {
     mailIdentity = {};
     entity = {};
     service = proxyquire('./commit.js', {
-      '../models/permission.js': permission,
-      '../models/mailIdentity.js': mailIdentity,
-      '../models/entity.js': entity,
+      '../adapters/permission.js': permission,
+      '../adapters/mailIdentity.js': mailIdentity,
+      '../adapters/entity.js': entity,
     });
   });
 
