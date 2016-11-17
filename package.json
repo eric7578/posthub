@@ -5,15 +5,11 @@
   "scripts": {
     "start": "npm run start:server & npm run start:react",
     "start:server": "nodemon server.js --exec babel-node --ignore './components' --ignore './public' -e js,jsx,graphql",
-    "start:react": "nodemon --exec \"webpack\" --ignore './public' -e js,jsx",
     "build": "babel server.js -d dist",
     "release": "NODE_ENV=production node dist/server.js",
     "test": "NODE_ENV=test mocha ./test/setup.js ./**/*.test.js --colors --compilers js:babel-register --require babel-polyfill"
   },
   "devDependencies": {
-    "colors": "^1.1.2",
-    "knex": "^0.12.5",
-    "mysql": "^2.11.1",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.17.0",
     "babel-plugin-transform-async-to-generator": "^6.16.0",
@@ -26,8 +22,27 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "chai-spies": "^0.7.1",
+    "colors": "^1.1.2",
+    "knex": "^0.12.5",
     "mocha": "^3.1.2",
+    "mysql": "^2.11.1",
     "proxyquire": "^1.7.10",
     "sqlite3": "^3.1.6"
-  }
+  },
+  "description": "",
+  "main": "knex.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eric7578/swarm.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eric7578/swarm/issues"
+  },
+  "homepage": "https://github.com/eric7578/swarm#readme"
 }
