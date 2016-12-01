@@ -52,3 +52,6 @@ public/javascripts
 
 # test db
 :memory
+
+# thrift compiled files
+thrift
