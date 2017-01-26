@@ -23,6 +23,7 @@
     "colors": "^1.1.2",
     "knex": "^0.12.6",
     "mysql": "^2.13.0",
+    "sinon": "^1.17.7",
     "thrift": "^0.9.3"
   },
   "repository": "git+https://github.com/eric7578/swarm.git",
