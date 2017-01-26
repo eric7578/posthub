@@ -1,5 +1,5 @@
 {
-  "name": "swarm",
+  "name": "projecthub",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -13,29 +13,27 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "chai-spies": "^0.7.1",
-    "mocha": "^3.1.2",
+    "mocha": "^3.2.0",
     "proxyquire": "^1.7.10",
-    "sqlite3": "^3.1.6"
+    "sqlite3": "^3.1.8"
   },
   "description": "",
   "directories": {
     "test": "test"
   },
   "dependencies": {
-    "bcrypt": "^0.8.7",
+    "bcrypt": "^1.0.2",
     "colors": "^1.1.2",
-    "knex": "^0.12.5",
-    "mysql": "^2.11.1",
+    "knex": "^0.12.6",
+    "mysql": "^2.13.0",
     "thrift": "^0.9.3"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eric7578/swarm.git"
-  },
-  "author": "",
+  "repository": "git+https://github.com/eric7578/swarm.git",
+  "author": "ericyan <eric7578@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/eric7578/swarm/issues"
   },
-  "homepage": "https://github.com/eric7578/swarm#readme"
+  "homepage": "https://github.com/eric7578/swarm#readme",
+  "main": "index.js"
 }
