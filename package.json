@@ -4,16 +4,13 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "test": "NODE_ENV=test mocha ./test/setup.js ./**/*.test.js --colors"
+    "test": "node --harmony-async-await ./node_modules/.bin/ava NODE_ENV=test ./**/*_test.js"
   },
   "engines": {
     "node": ">=7.2.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
-    "chai-spies": "^0.7.1",
-    "mocha": "^3.2.0",
+    "ava": "^0.17.0",
     "proxyquire": "^1.7.10",
     "sqlite3": "^3.1.8"
   },
