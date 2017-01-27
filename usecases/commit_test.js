@@ -63,10 +63,6 @@ test('make commit under not exist parnet commit', async t => {
   const message = 'message'
 
   entity.findById.returns(null)
-  const promise = usecases.makeCommit(message, parentId)
 
-  t.true(entity.findById.calledOnce)
-  t.true(entity.findById.calledWithExactly(parentId))
-  t.false(entity.create.called)
-  t.throws(promise, 'parent not exist')
+  t.throws(usecases.makeCommit(message, parentId), 'parent not exist')
 })
