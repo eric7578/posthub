@@ -13,15 +13,15 @@ test.beforeEach(t => {
   t.context = {
     user,
     encrypt,
-    usecases: proxyquire('./regist', {
-      '../repository/user': user,
-      '../repository/encrypt': encrypt
+    regist: proxyquire('./regist', {
+      '../../repository/user': user,
+      '../../repository/encrypt': encrypt
     })
   }
 })
 
 test('regist with mail and password', async t => {
-  const { user, encrypt, usecases } = t.context
+  const { user, encrypt, regist } = t.context
   const mail = 'user@mail.com'
   const password = 'password'
   const hashPassword = 'pa2svv0rd'
@@ -33,7 +33,7 @@ test('regist with mail and password', async t => {
   user.create.returns(createdUser)
   encrypt.hash.returns(hashPassword)
 
-  const regsitedUser = await usecases.registMailUser(mail, password)
+  const regsitedUser = await regist(mail, password)
 
   t.true(user.findByMail.calledWithExactly(mail))
   t.true(encrypt.hash.calledWithExactly(password))
@@ -42,7 +42,7 @@ test('regist with mail and password', async t => {
 })
 
 test('regist with exist mail', async t => {
-  const { user, encrypt, usecases } = t.context
+  const { user, encrypt, regist } = t.context
   const mail = 'user@mail.com'
   const password = 'password'
   const hashPassword = 'pa2svv0rd'
@@ -52,5 +52,5 @@ test('regist with exist mail', async t => {
 
   user.findByMail.returns(existedUser)
 
-  t.throws(usecases.registMailUser(mail, password), 'mail exist')
+  t.throws(regist(mail, password), 'mail exist')
 })

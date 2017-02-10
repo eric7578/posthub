@@ -12,15 +12,15 @@ test.beforeEach(t => {
   t.context = {
     user,
     encrypt,
-    usecases: proxyquire('./login', {
-      '../repository/user': user,
-      '../repository/encrypt': encrypt
+    login: proxyquire('./login', {
+      '../../repository/user': user,
+      '../../repository/encrypt': encrypt
     })
   }
 })
 
 test('login mail user', async t => {
-  const { user, encrypt, usecases } = t.context
+  const { user, encrypt, login } = t.context
   const mail = 'user@mail.com'
   const password = 'password'
   const hashPassword = 'pa2svv0rd'
@@ -31,7 +31,7 @@ test('login mail user', async t => {
 
   user.findByMail.returns(existUser)
   encrypt.isEqual.returns(true)
-  const loginUser = await usecases.loginMailUser(mail, password)
+  const loginUser = await login(mail, password)
 
   t.true(user.findByMail.calledOnce)
   t.true(user.findByMail.calledWithExactly(mail))
@@ -41,7 +41,7 @@ test('login mail user', async t => {
 })
 
 test('login mail user with wrong password', async t => {
-  const { user, encrypt, usecases } = t.context
+  const { user, encrypt, login } = t.context
   const mail = 'user@mail.com'
   const wrongPassword = 'wrong-password'
   const hashPassword = 'pa2svv0rd'
@@ -53,15 +53,15 @@ test('login mail user with wrong password', async t => {
   user.findByMail.returns(existUser)
   encrypt.isEqual.returns(false)
 
-  t.throws(usecases.loginMailUser(mail, wrongPassword), 'invalid password')
+  t.throws(login(mail, wrongPassword), 'invalid password')
 })
 
 test('login mail user with not exist mail', async t => {
-  const { user, usecases } = t.context
+  const { user, login } = t.context
   const mail = 'not-exist@mail.com'
   const password = 'password'
 
   user.findByMail.returns(null)
 
-  t.throws(usecases.loginMailUser(mail, password), 'invalid mail')
+  t.throws(login(mail, password), 'invalid mail')
 })

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "test": "node --harmony-async-await ./node_modules/.bin/ava NODE_ENV=test ./**/*_test.js",
+    "test": "node --harmony-async-await ./node_modules/.bin/ava ./**/*_test.js ./**/**/*_test.js",
     "watch:test": "nodemon --exec \"yarn test\""
   },
   "engines": {

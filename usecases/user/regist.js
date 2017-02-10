@@ -1,7 +1,7 @@
-const user = require('../repository/user')
-const encrypt = require('../repository/encrypt')
+const user = require('../../repository/user')
+const encrypt = require('../../repository/encrypt')
 
-exports.registMailUser = async function (mail, password) {
+module.exports = async function (mail, password) {
   const existedUser = await user.findByMail(mail)
   if (existedUser) {
     throw new Error('mail exist')

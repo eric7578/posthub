@@ -1,6 +1,6 @@
-const entity = require('../repository/entity')
+const entity = require('../../repository/entity')
 
-exports.makeCommit = async function (message, parentId) {
+module.exports = async function (message, parentId) {
   if (parentId) {
     const parent = await entity.findById(parentId)
     if (!parent) {
