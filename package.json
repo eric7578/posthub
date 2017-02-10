@@ -11,9 +11,9 @@
     "node": ">=7.2.0"
   },
   "devDependencies": {
-    "ava": "^0.17.0",
+    "ava": "^0.18.1",
     "nodemon": "^1.11.0",
-    "proxyquire": "^1.7.10",
+    "proxyquire": "^1.7.11",
     "sqlite3": "^3.1.8"
   },
   "description": "",
@@ -26,7 +26,7 @@
     "knex": "^0.12.6",
     "mysql": "^2.13.0",
     "sinon": "^1.17.7",
-    "thrift": "^0.9.3"
+    "thrift": "^0.10.0"
   },
   "repository": "git+https://github.com/eric7578/swarm.git",
   "author": "ericyan <eric7578@gmail.com>",
