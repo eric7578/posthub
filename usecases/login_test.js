@@ -13,8 +13,8 @@ test.beforeEach(t => {
     user,
     encrypt,
     login: proxyquire('./login', {
-      '../../repository/user': user,
-      '../../repository/encrypt': encrypt
+      '../repository/user': user,
+      '../repository/encrypt': encrypt
     })
   }
 })

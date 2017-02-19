@@ -3,8 +3,8 @@ const assert = require('assert')
 const { slice } = Array.prototype
 
 module.exports = function (usecase, hooks) {
-  if (!Array.isArray(hooks)) {
-    hooks = slice.call(arguments, 1)
+  if (!Array.isArray(hooks) || hooks.length === 0) {
+    return usecase
   }
 
   return async function compose() {

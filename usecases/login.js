@@ -1,5 +1,5 @@
-const user = require('../../repository/user')
-const encrypt = require('../../repository/encrypt')
+const user = require('../repository/user')
+const encrypt = require('../repository/encrypt')
 
 module.exports = async function (mail, password) {
   const mailUser = await user.findByMail(mail)

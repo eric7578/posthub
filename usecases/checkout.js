@@ -1,4 +1,4 @@
-const entity = require('../../repository/entity')
+const entity = require('../repository/entity')
 
 module.exports = async function (commitId) {
   return await entity.findById(commitId)

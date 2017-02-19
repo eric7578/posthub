@@ -11,7 +11,7 @@ test.beforeEach(t => {
   t.context = {
     entity,
     make: proxyquire('./make', {
-      '../../repository/entity': entity
+      '../repository/entity': entity
     })
   }
 })

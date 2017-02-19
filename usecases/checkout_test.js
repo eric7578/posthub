@@ -9,7 +9,7 @@ test.beforeEach(t => {
   t.context = {
     entity,
     checkout: proxyquire('./checkout', {
-      '../../repository/entity': entity
+      '../repository/entity': entity
     })
   }
 })

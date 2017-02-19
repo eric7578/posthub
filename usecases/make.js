@@ -1,4 +1,4 @@
-const entity = require('../../repository/entity')
+const entity = require('../repository/entity')
 
 module.exports = async function (message, parentId) {
   if (parentId) {
@@ -11,4 +11,8 @@ module.exports = async function (message, parentId) {
   } else {
     return await entity.createRoot(message)
   }
+}
+
+module.exports.sub = async function () {
+  console.log('makeSub')
 }
