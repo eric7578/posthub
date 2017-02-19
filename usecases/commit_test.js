@@ -18,13 +18,14 @@ test.beforeEach(t => {
 
 test('commit root with message', async t => {
   const { entity, commit } = t.context
+  const user = {}
   const createdCommit = {
     commitId: '6a7b8c9d510',
     message: 'message'
   }
 
   entity.createRoot.returns(createdCommit)
-  const ret = await commit('message')
+  const ret = await commit(user, 'message')
 
   t.true(entity.createRoot.calledOnce)
   t.true(entity.createRoot.calledWithExactly('message'))
@@ -35,6 +36,7 @@ test('commit under exist parnet', async t => {
   const { entity, commit } = t.context
   const parentId = 'parentId'
   const message = 'message'
+  const user = {}
   const parentCommit = {
     commitId: parentId,
     message: 'parent message'
@@ -46,7 +48,7 @@ test('commit under exist parnet', async t => {
 
   entity.findById.returns(parentCommit)
   entity.create.returns(createdCommit)
-  const ret = await commit(message, parentId)
+  const ret = await commit(user, message, parentId)
 
   t.true(entity.findById.calledOnce)
   t.true(entity.findById.calledWithExactly(parentId))
@@ -60,8 +62,9 @@ test('commit under not exist parnet', async t => {
   const { entity, commit } = t.context
   const parentId = 'parentId'
   const message = 'message'
+  const user = {}
 
   entity.findById.returns(null)
 
-  t.throws(commit(message, parentId), 'parent not exist')
+  t.throws(commit(user, message, parentId), 'parent not exist')
 })

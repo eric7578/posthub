@@ -1,6 +1,6 @@
 const entity = require('../repository/entity')
 
-module.exports = async function (message, parentId) {
+module.exports = async function (user, message, parentId) {
   if (parentId) {
     const parent = await entity.findById(parentId)
     if (!parent) {

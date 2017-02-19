@@ -1,12 +1,12 @@
 const entity = require('../repository/entity')
 
-module.exports = async function (commitId) {
+module.exports = async function (user, commitId) {
   return await entity.findById(commitId)
 }
 
-module.exports.parents = async function (commitId, checkoutTimes) {
+module.exports.parents = async function (user, commitId, checkoutTimes) {
   const commits = []
-  const limitedByTimes = arguments.length === 2
+  const limitedByTimes = checkoutTimes > 0
 
   while (!limitedByTimes || limitedByTimes && checkoutTimes-- > 0) {
     const commit = await entity.findById(commitId)
