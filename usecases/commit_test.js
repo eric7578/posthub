@@ -10,29 +10,29 @@ test.beforeEach(t => {
   }
   t.context = {
     entity,
-    make: proxyquire('./make', {
+    commit: proxyquire('./commit', {
       '../repository/entity': entity
     })
   }
 })
 
-test('make root commit with message', async t => {
-  const { entity, make } = t.context
+test('commit root with message', async t => {
+  const { entity, commit } = t.context
   const createdCommit = {
     commitId: '6a7b8c9d510',
     message: 'message'
   }
 
   entity.createRoot.returns(createdCommit)
-  const commit = await make('message')
+  const ret = await commit('message')
 
   t.true(entity.createRoot.calledOnce)
   t.true(entity.createRoot.calledWithExactly('message'))
-  t.deepEqual(commit, createdCommit)
+  t.deepEqual(ret, createdCommit)
 })
 
-test('make commit under exist parnet commit', async t => {
-  const { entity, make } = t.context
+test('commit under exist parnet', async t => {
+  const { entity, commit } = t.context
   const parentId = 'parentId'
   const message = 'message'
   const parentCommit = {
@@ -46,22 +46,22 @@ test('make commit under exist parnet commit', async t => {
 
   entity.findById.returns(parentCommit)
   entity.create.returns(createdCommit)
-  const commit = await make(message, parentId)
+  const ret = await commit(message, parentId)
 
   t.true(entity.findById.calledOnce)
   t.true(entity.findById.calledWithExactly(parentId))
 
   t.true(entity.create.calledOnce)
   t.true(entity.create.calledWithExactly(message, parentId))
-  t.deepEqual(commit, createdCommit)
+  t.deepEqual(ret, createdCommit)
 })
 
-test('make commit under not exist parnet commit', async t => {
-  const { entity, make } = t.context
+test('commit under not exist parnet', async t => {
+  const { entity, commit } = t.context
   const parentId = 'parentId'
   const message = 'message'
 
   entity.findById.returns(null)
 
-  t.throws(make(message, parentId), 'parent not exist')
+  t.throws(commit(message, parentId), 'parent not exist')
 })

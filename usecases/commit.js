@@ -12,7 +12,3 @@ module.exports = async function (message, parentId) {
     return await entity.createRoot(message)
   }
 }
-
-module.exports.sub = async function () {
-  console.log('makeSub')
-}
