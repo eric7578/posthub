@@ -41,7 +41,7 @@ test('throw commitNotFound if commit/parent is not exist', t => {
   entity.findById.withArgs(commitId).returns(null)
   entity.findById.withArgs(parentId).returns(null)
 
-  t.throws(rebase(user, commitId, parentId), Error, 'commitNotFound')
+  t.throws(rebase(user, commitId, parentId), 'commitNotFound')
 })
 
 test('throw levelNotMatch if commit level is not greater than parent commit\'s level', t => {
@@ -53,5 +53,5 @@ test('throw levelNotMatch if commit level is not greater than parent commit\'s l
   entity.findById.withArgs(commitId).returns({ commitId, level: 1 })
   entity.findById.withArgs(parentId).returns({ commitId: parentId, level: 1 })
 
-  t.throws(rebase(user, commitId, parentId), Error, 'levelNotMatch')
+  t.throws(rebase(user, commitId, parentId), 'levelNotMatch')
 })

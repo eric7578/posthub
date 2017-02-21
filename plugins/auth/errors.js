@@ -1,1 +1,1 @@
-exports.illegalOperation = new Error('IllegalOperation')
+exports.illegalOperation = new Error('illegalOperation')

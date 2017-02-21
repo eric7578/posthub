@@ -22,3 +22,11 @@ exports.commit = async function (next, user, message, parentId) {
   await permission.update(user.userId, createdCommit.commitId, CREATOR)
   return createdCommit
 }
+
+exports.rebase = async function (next, user, commitId, parentId) {
+  const permit = await permission.find(user.userId, commitId)
+  if (!permit || !isset(permit, EDIT)) {
+    throw illegalOperation
+  }
+  return await next 
+}
