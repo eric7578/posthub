@@ -1,14 +1,13 @@
 {
   "name": "projecthub",
   "version": "0.0.0",
-  "private": true,
   "scripts": {
     "start": "node server.js",
-    "test": "node --harmony-async-await ./node_modules/.bin/ava ./**/*_test.js ./**/**/*_test.js",
+    "test": "ava ./**/*_test.js ./**/**/*_test.js",
     "watch:test": "nodemon --exec \"yarn test\""
   },
   "engines": {
-    "node": ">=7.2.0"
+    "node": ">=7.6.0"
   },
   "devDependencies": {
     "ava": "^0.18.1",
