@@ -5,14 +5,11 @@ exports.loadFromConfig = function () {
   const configPath = path.resolve(cwd, 'plugins.config.js')
   const config = require(configPath)
 
-  const pluginDir = path.resolve(cwd, 'plugins')
+  const pluginsDir = path.resolve(cwd, 'plugins')
   const pluginPathes = config.use
     .map(setting => {
-      if (typeof setting === 'string') {
-        return path.resolve(pluginDir, setting)
-      }
-      const name = path.basename(setting.plugin, '.js')
-      return path.resolve(pluginDir, name)
+      const dir = typeof setting === 'string' ? setting : setting.plugin
+      return path.resolve(pluginsDir, dir, 'hooks')
     })
 
   return aggregatePlugins(pluginPathes)
