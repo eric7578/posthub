@@ -1,24 +1,33 @@
-const thrift = require('thrift');
-const fs = require('fs');
-const path = require('path');
+const express = require('express')
+const graphqlHttp = require('express-graphql')
+const { buildSchema } = require('graphql')
+const fs = require('mz/fs')
+const path = require('path')
 
-const processor = new thrift.MultiplexedProcessor();
-const services = fs.readdirSync('./services');
-services
-  .map(service => path.resolve('./services', service))
-  .filter(servicePath => fs.statSync(servicePath).isFile())
-  .forEach(servicePath => {
-    try {
-      const { name } = path.parse(servicePath);
-      const serviceName = name.charAt(0).toUpperCase() + name.slice(1);
-      const service = require(servicePath);
-      processor.registerProcessor(serviceName, new Echo.Processor(service));
-    } catch (err) {
-      console.log(`Fail require: ${servicePath}`)
-      console.log(`ERR: ${err.message}`);
-    }
-  });
+const glob = require('./utils/glob')
 
-const server = thrift.createMultiplexServer(processor);
-server.on('error', err => console.log(err));
-server.listen(8080);
+const { NODE_ENV, PORT } = process.env
+const app = express()
+app.set('port', PORT || 3000)
+app.listen(app.get('port'), () => console.log(`listen on ${app.get('port')}`))
+
+// load graphql files
+const graphqlDir = path.resolve(process.cwd(), 'graphql')
+glob(path.resolve(graphqlDir, '*.graphql'))
+  .then(graphqlFiles =>
+    graphqlFiles.map(graphqlFile =>
+      fs
+      .readFile(graphqlFile, { encoding: 'utf8' })
+      .then(graphql => {
+        const schema = buildSchema(graphql)
+        const { name } = path.parse(graphqlFile)
+        const rootValue = require(path.resolve(graphqlDir, name))
+        app.use(`/${name}`, graphqlHttp({
+          schema,
+          rootValue,
+          graphiql: true
+        }))
+        console.log(`apply graphql server on /${name}`)
+      })
+    )
+  )
