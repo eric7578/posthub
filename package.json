@@ -1,6 +1,9 @@
 {
   "name": "projecthub",
   "version": "0.0.0",
+  "bin": {
+    "proj": "./cli/index.js"
+  },
   "scripts": {
     "start": "node server.js",
     "test": "ava ./**/*_test.js ./**/**/*_test.js",
@@ -29,8 +32,10 @@
     "knex": "^0.12.7",
     "mysql": "^2.13.0",
     "mz": "^2.6.0",
+    "prompt": "^1.0.0",
     "sinon": "^1.17.7",
-    "thrift": "^0.10.0"
+    "thrift": "^0.10.0",
+    "yargs": "^6.6.0"
   },
   "repository": "git+https://github.com/eric7578/swarm.git",
   "author": "ericyan <eric7578@gmail.com>",
