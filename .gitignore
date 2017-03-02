@@ -56,3 +56,6 @@ public/javascripts
 # compiled thrift
 thrift/index.js
 thrift/lib/*.js
+
+# knexfile
+repository/knexfile.js
