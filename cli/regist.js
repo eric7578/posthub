@@ -1,28 +1,17 @@
-const prompt = require('prompt')
 const assert = require('assert')
 
-exports.command = 'regist'
+const { regist } = require('../usecases')
 
-exports.describe = 'make a get HTTP request'
+exports.describe = 'Regist a new user'
 
-exports.builder = {
+exports.options = {
   mail: {
     alias: 'm',
     required: true,
-    describe: 'User regist mail'
+    describe: 'Mail'
   }
 }
 
 exports.handler = argv => {
-  prompt.start()
-  prompt.get({
-    properties: {
-      password: {
-        hidden: true
-      }
-    }
-  }, (err, result) => {
-    console.log(argv.mail)
-    console.log(result.password)
-  })
+  
 }

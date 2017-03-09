@@ -1,8 +1,5 @@
 #!/usr/bin/env node
-const yargs = require('yargs')
+const ezcmd = require('ezcmd')
+const path = require('path')
 
-yargs
-  .commandDir(__dirname)
-  .demandCommand(1)
-  .help()
-  .argv
+ezcmd(__dirname)
