@@ -2,7 +2,7 @@
   "name": "projecthub",
   "version": "0.0.0",
   "bin": {
-    "proj": "./cli/index.js"
+    "projecthub": "./bin/projecthub.js"
   },
   "scripts": {
     "start": "node server.js",

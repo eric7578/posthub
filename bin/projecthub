@@ -2,4 +2,4 @@
 const ezcmd = require('ezcmd')
 const path = require('path')
 
-ezcmd(__dirname)
+ezcmd(path.resolve(process.cwd(), 'commands'))
