@@ -5,7 +5,7 @@
     "projecthub": "./bin/projecthub.js"
   },
   "scripts": {
-    "start": "node server.js",
+    "start:server": "node proto",
     "test": "ava ./**/*_test.js ./**/**/*_test.js",
     "watch:test": "nodemon --exec \"yarn test\""
   },
@@ -28,7 +28,9 @@
     "ezcmd": "^0.1.1",
     "glob": "^7.1.1",
     "grpc": "^1.1.2",
+    "ini": "^1.3.4",
     "knex": "^0.12.7",
+    "log4js": "^1.1.1",
     "mysql": "^2.13.0",
     "mz": "^2.6.0",
     "sinon": "^1.17.7"
