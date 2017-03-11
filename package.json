@@ -25,16 +25,13 @@
   "dependencies": {
     "bcrypt": "^1.0.2",
     "colors": "^1.1.2",
-    "express": "^4.14.1",
-    "express-graphql": "^0.6.3",
     "ezcmd": "^0.1.1",
     "glob": "^7.1.1",
-    "graphql": "^0.9.1",
+    "grpc": "^1.1.2",
     "knex": "^0.12.7",
     "mysql": "^2.13.0",
     "mz": "^2.6.0",
-    "sinon": "^1.17.7",
-    "thrift": "^0.10.0"
+    "sinon": "^1.17.7"
   },
   "repository": "git+https://github.com/eric7578/swarm.git",
   "author": "ericyan <eric7578@gmail.com>",
