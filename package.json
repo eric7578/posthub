@@ -6,8 +6,8 @@
   },
   "scripts": {
     "start:server": "node proto",
-    "test": "ava ./**/*_test.js ./**/**/*_test.js",
-    "watch:test": "nodemon --exec \"yarn test\""
+    "test": "NODE_ENV=test ava ./**/*_test.js ./**/**/*_test.js",
+    "test:watch": "nodemon --exec \"yarn test\""
   },
   "engines": {
     "node": ">=7.6.0"
