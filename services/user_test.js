@@ -3,12 +3,17 @@ const { spy } = require('sinon')
 const proxyquire = require('proxyquire')
 
 const knex = require('../repository/knex')
-const { MailIdentity } = proxyquire('./user', {
-  '../usecases': {
-    regist: require('../usecases/regist'),
-    login: require('../usecases/login'),
-    token: require('../usecases/token')
-  }
+const user = require('./user')
+
+const repository = {
+  user: require('../repository/user'),
+  encrypt: require('../repository/encrypt')
+}
+
+const mailIdentity = user.mailIdentity({
+  regist: require('../usecases/regist')(repository),
+  login: require('../usecases/login')(repository),
+  token: require('../usecases/token')(repository)
 })
 
 test.before(async t => {
@@ -27,7 +32,7 @@ test.serial('regist with mail/password', async t => {
     }
   }
   const callback = spy()
-  await MailIdentity.regist(call, callback)
+  await mailIdentity.regist(call, callback)
 
   const args = callback.args[0]
   t.falsy(args[0])
@@ -43,7 +48,7 @@ test.serial('regist with exist mail', async t => {
     }
   }
   const callback = spy()
-  await MailIdentity.regist(call, callback)
+  await mailIdentity.regist(call, callback)
 
   const args = callback.args[0]
   t.is(args[0].message, 'mail exist')
@@ -58,7 +63,7 @@ test.serial('login with mail/password', async t => {
     }
   }
   const callback = spy()
-  await MailIdentity.login(call, callback)
+  await mailIdentity.login(call, callback)
 
   const args = callback.args[0]
   t.falsy(args[0])
@@ -74,7 +79,7 @@ test.serial('login with not exist mail/password', async t => {
     }
   }
   const callback = spy()
-  await MailIdentity.login(call, callback)
+  await mailIdentity.login(call, callback)
 
   const args = callback.args[0]
   t.is(args[0].message, 'invalid mail')
@@ -89,7 +94,7 @@ test.serial('login with wrong password', async t => {
     }
   }
   const callback = spy()
-  await MailIdentity.login(call, callback)
+  await mailIdentity.login(call, callback)
 
   const args = callback.args[0]
   t.is(args[0].message, 'invalid password')

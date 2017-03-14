@@ -1,3 +1,3 @@
-exports.getToken = user => {
+module.exports = repository => user => {
   return user.id
 }

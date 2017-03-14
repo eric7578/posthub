@@ -1,7 +1,6 @@
-const user = require('../repository/user')
-const encrypt = require('../repository/encrypt')
+module.exports = repository => async (mail, password) => {
+  const { user, encrypt } = repository
 
-module.exports = async function (mail, password) {
   const mailUser = await user.findByMail(mail)
   if (!mailUser) {
     throw new Error('invalid mail')
