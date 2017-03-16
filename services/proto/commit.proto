@@ -1,0 +1,44 @@
+syntax = 'proto3';
+
+package commit;
+
+message Node {
+  string id = 1;
+  string title = 2;
+  int32 created = 3;
+  int32 updated = 4;
+}
+
+message Parent {
+  string fromId = 1;
+  Node parent = 2;
+}
+
+message Children {
+  string fromId = 1;
+  repeated Node children = 2;
+}
+
+message CreateRequest {
+  string token = 1;
+  string title = 2;
+}
+
+message ReadRequest {
+  string token = 1;
+  string commitId = 2;
+}
+
+message RebaseRequest {
+  string token = 1;
+  string commitId = 2;
+  string targetId = 3;
+}
+
+service Commit {
+  rpc Commit (CreateRequest) returns (Node);
+  rpc Checkout (ReadRequest) returns (Node);
+  rpc CheckoutParent (ReadRequest) returns (Parent);
+  rpc CheckoutChildren (ReadRequest) returns (Children);
+  rpc Rebase (RebaseRequest) returns (Node);
+}
