@@ -1,52 +1,19 @@
-const assert = require('assert')
 const path = require('path')
-const fs = require('fs')
 const grpc = require('grpc')
-const logger = require('log4js').getLogger('proto')
 
-const proto = grpc.load(path.resolve(process.cwd(), 'proto', 'root.proto'))
+const composeRpcService = require('./composeRpcService')
+
+const HOST = process.env.HOST || '0.0.0.0:3000'
+const proto = grpc.load(path.resolve(__dirname, 'proto', 'root.proto'))
+
 const server = new grpc.Server()
+server.bind(HOST, grpc.ServerCredentials.createInsecure())
 
-function configServer([service, serverOptions]) {
-  const { proto, module } = loadProtoModule(service)
-  configService(proto, module, serverOptions)
-}
+const MailIdentity = require('./rpcServices/MailIdentity')({
+  user: require('../repository/user'),
+  encrypt: require('../repository/encrypt'),
+  token: require('../repository/token')
+})
+server.addProtoService(proto.user.MailIdentity.service, composeRpcService(MailIdentity))
 
-function loadProtoModule(service) {
-  const dir = path.resolve(process.cwd(), 'proto')
-  const protoFilePath = path.format({
-    dir,
-    name: service,
-    ext: path.extname(service) || '.proto'
-  })
-  const modulePath = path.format({
-    dir,
-    name: service,
-    ext: '.js'
-  })
-
-  return {
-    proto: grpc.load(protoFilePath),
-    module: require(modulePath)
-  }
-}
-
-function configService(proto, module, opt) {
-
-  Object
-    .values(proto)
-    .filter(instance => instance.service)
-    .forEach(instance => {
-      const { service } = instance
-      const serviceGenerator = module[service.name]
-      assert.equal(
-        typeof serviceGenerator,
-        'function',
-        `${service.name} should be a exported method`
-      )
-
-      server.addProtoService(service, serviceGenerator(proto))
-      logger.info(`Init service: ${service.name}`)
-    })
-  server.bind(opt.host, grpc.ServerCredentials.createInsecure());
-}
+server.start()
