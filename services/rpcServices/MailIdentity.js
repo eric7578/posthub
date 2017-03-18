@@ -1,3 +1,5 @@
+const assert = require('assert')
+
 module.exports = repository => {
   const { user, encrypt, token } = repository
 
@@ -5,14 +7,11 @@ module.exports = repository => {
     async login(request) {
       const { mail, password } = request
       const mailUser = await user.findByMail(mail)
-      if (!mailUser) {
-        throw new Error('invalid mail')
-      }
+      assert.ok(mailUser, 'mail not found')
 
       const isPasswordCorrect = await encrypt.isEqual(password, mailUser.password)
-      if (!isPasswordCorrect) {
-        throw new Error('invalid password')
-      }
+      assert(isPasswordCorrect, 'invalid password')
+
       const accessToken = await token.generate(mailUser)
 
       return {
@@ -26,9 +25,7 @@ module.exports = repository => {
       const { mail, password } = request
 
       const existedUser = await user.findByMail(mail)
-      if (existedUser) {
-        throw new Error('mail exist')
-      }
+      assert(!existedUser, 'mail exist')
 
       const hashPassword = await encrypt.hash(password)
       const mailUser = await user.create(mail, hashPassword)

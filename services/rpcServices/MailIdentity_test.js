@@ -59,7 +59,7 @@ test.serial('login with not exist mail/password', async t => {
   }
   const error = await t.throws(MailIdentity.login(request))
 
-  t.is(error.message, 'invalid mail')
+  t.is(error.message, 'mail not found')
 })
 
 test.serial('login with wrong password', async t => {

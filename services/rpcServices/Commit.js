@@ -9,7 +9,7 @@ module.exports = repository => {
 
       if (request.hasOwnProperty('parentId')) {
         const parent = await entity.findById(parentId)
-        assert.ok(parent, 'parent not found')
+        assert(parent, 'parent not found')
 
         return await entity.create(title, parent.id, parent.level + 1)
       } else {
@@ -19,7 +19,7 @@ module.exports = repository => {
     async checkout(request) {
       const { token, commitId } = request
       const found = await entity.findById(commitId)
-      assert.ok(found, 'commit not found')
+      assert(found, 'commit not found')
 
       return found
     }
