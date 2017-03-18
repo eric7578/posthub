@@ -59,5 +59,25 @@ test.serial('commit child node with inexist parent', async t => {
   }
   const err = await t.throws(Commit.commit(request))
 
-  t.is(err.message, 'parent not exist')
+  t.is(err.message, 'parent not found')
+})
+
+test.serial('checkout exist node', async t => {
+  const request = {
+    token: user.token,
+    commitId: child.id
+  }
+  const found = await Commit.checkout(request)
+
+  t.deepEqual(found, child)
+})
+
+test.serial('checkout inexist node', async t => {
+  const request = {
+    token: user.token,
+    commitId: 0
+  }
+  const err = await t.throws(Commit.checkout(request))
+
+  t.is(err.message, 'commit not found')
 })
