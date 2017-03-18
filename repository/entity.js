@@ -48,3 +48,19 @@ exports.findByParentId = async (parentId) => {
     .from('entities')
     .where('parentId', '=', parentId)
 }
+
+exports.update = async (commitId, fields) => {
+  const numAffected = await knex
+    .update(fields)
+    .from('entities')
+    .where('id', '=', commitId)
+  return numAffected === 1
+}
+
+exports.exists = async commitId => {
+  const entities = await knex
+    .select('id')
+    .from('entities')
+    .where('id', '=', commitId)
+  return entities.length > 0
+}

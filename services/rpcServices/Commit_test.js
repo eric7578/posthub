@@ -111,3 +111,35 @@ test.serial(`checkout parent's children`, async t => {
 
   t.deepEqual(children, [child])
 })
+
+test.serial(`rebase child to new root`, async t => {
+  const newRoot = await Commit.commit({
+    token: user.token,
+    title: 'new root commit'
+  })
+  const newChild = await Commit.commit({
+    token: user.token,
+    title: 'new child commit',
+    parentId: root.id
+  })
+  const request = {
+    token: user.token,
+    commitId: newChild.id,
+    targetId: newRoot.id
+  }
+  const rebased = await Commit.rebase(request)
+  const childrenOfOldRoot = await Commit.checkoutChildren({
+    token: user.token,
+    commitId: root.id
+  })
+  const childrenOfNewRoot = await Commit.checkoutChildren({
+    token: user.token,
+    commitId: newRoot.id
+  })
+
+  t.deepEqual(rebased, Object.assign(newChild, {
+    parentId: newRoot.id
+  }))
+  t.deepEqual(childrenOfOldRoot, [child])
+  t.deepEqual(childrenOfNewRoot, [newChild])
+})

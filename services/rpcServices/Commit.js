@@ -36,6 +36,14 @@ module.exports = repository => {
       assert(parent, COMMIT_NOT_FOUND)
 
       return await entity.findByParentId(parent.id)
+    },
+    async rebase(request) {
+      const { token, commitId, targetId } = request
+      assert(await entity.exists(commitId), 'commit not found')
+      assert(await entity.exists(targetId), 'rebase target not found')
+
+      assert(await entity.update(commitId, { parentId: targetId }), 'rebase failed')
+      return await entity.findById(commitId)
     }
   }
 }
