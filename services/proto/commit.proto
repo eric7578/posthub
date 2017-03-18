@@ -5,26 +5,18 @@ package commit;
 message Node {
   string id = 1;
   string title = 2;
-  int32 created = 3;
-  int32 updated = 4;
+  int32 level = 3;
+  int32 created = 4;
+  int32 updated = 5;
 }
 
-message Parent {
-  string fromId = 1;
-  Node parent = 2;
-}
-
-message Children {
-  string fromId = 1;
-  repeated Node children = 2;
-}
-
-message CreateRequest {
+message CommitRequest {
   string token = 1;
   string title = 2;
+  string parentId = 3;
 }
 
-message ReadRequest {
+message CheckoutRequest {
   string token = 1;
   string commitId = 2;
 }
@@ -36,9 +28,9 @@ message RebaseRequest {
 }
 
 service Commit {
-  rpc Commit (CreateRequest) returns (Node);
-  rpc Checkout (ReadRequest) returns (Node);
-  rpc CheckoutParent (ReadRequest) returns (Parent);
-  rpc CheckoutChildren (ReadRequest) returns (Children);
+  rpc Commit (CommitRequest) returns (Node);
+  rpc Checkout (CheckoutRequest) returns (Node);
+  rpc CheckoutParent (CheckoutRequest) returns (Node);
+  rpc CheckoutChildren (CheckoutRequest) returns (repeated Node);
   rpc Rebase (RebaseRequest) returns (Node);
 }

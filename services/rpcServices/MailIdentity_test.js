@@ -1,6 +1,4 @@
 const test = require('ava')
-const { spy } = require('sinon')
-const proxyquire = require('proxyquire')
 
 const knex = require('../../repository/knex')
 
