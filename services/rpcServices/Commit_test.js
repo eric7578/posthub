@@ -77,7 +77,37 @@ test.serial('checkout inexist node', async t => {
     token: user.token,
     commitId: 0
   }
-  const err = await t.throws(Commit.checkout(request))
+  const found = await Commit.checkout(request)
 
-  t.is(err.message, 'commit not found')
+  t.falsy(found)
+})
+
+test.serial(`checkout node's parent`, async t => {
+  const request = {
+    token: user.token,
+    commitId: child.id
+  }
+  const parent = await Commit.checkoutParent(request)
+
+  t.deepEqual(parent, root)
+})
+
+test.serial(`checkout root node's parent`, async t => {
+  const request = {
+    token: user.token,
+    commitId: root.id
+  }
+  const parent = await Commit.checkoutParent(request)
+
+  t.falsy(parent)
+})
+
+test.serial(`checkout parent's children`, async t => {
+  const request = {
+    token: user.token,
+    commitId: root.id
+  }
+  const children = await Commit.checkoutChildren(request)
+
+  t.deepEqual(children, [child])
 })

@@ -19,6 +19,7 @@ exports.createRoot = async title => {
 
   return {
     id,
+    parentId: null,
     title,
     level
   }
@@ -39,4 +40,11 @@ exports.create = async (title, parentId, level) => {
     title,
     level
   }
+}
+
+exports.findByParentId = async (parentId) => {
+  return knex
+    .select('*')
+    .from('entities')
+    .where('parentId', '=', parentId)
 }
