@@ -10,6 +10,11 @@ message Node {
   int32 updated = 5;
 }
 
+message Nodes {
+  int32 length = 1;
+  repeated Node nodes = 2;
+}
+
 message CommitRequest {
   string token = 1;
   string title = 2;
@@ -31,6 +36,6 @@ service Commit {
   rpc Commit (CommitRequest) returns (Node);
   rpc Checkout (CheckoutRequest) returns (Node);
   rpc CheckoutParent (CheckoutRequest) returns (Node);
-  rpc CheckoutChildren (CheckoutRequest) returns (repeated Node);
+  rpc CheckoutChildren (CheckoutRequest) returns (Nodes);
   rpc Rebase (RebaseRequest) returns (Node);
 }

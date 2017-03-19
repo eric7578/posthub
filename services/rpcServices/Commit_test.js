@@ -109,7 +109,10 @@ test.serial(`checkout parent's children`, async t => {
   }
   const children = await Commit.checkoutChildren(request)
 
-  t.deepEqual(children, [child])
+  t.deepEqual(children, {
+    length: 1,
+    nodes: [child]
+  })
 })
 
 test.serial(`rebase child to new root`, async t => {
@@ -140,6 +143,12 @@ test.serial(`rebase child to new root`, async t => {
   t.deepEqual(rebased, Object.assign(newChild, {
     parentId: newRoot.id
   }))
-  t.deepEqual(childrenOfOldRoot, [child])
-  t.deepEqual(childrenOfNewRoot, [newChild])
+  t.deepEqual(childrenOfOldRoot, {
+    length: 1,
+    nodes: [child]
+  })
+  t.deepEqual(childrenOfNewRoot, {
+    length: 1,
+    nodes: [newChild]
+  })
 })
