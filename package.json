@@ -5,7 +5,7 @@
     "projecthub": "./bin/projecthub.js"
   },
   "scripts": {
-    "start:server": "node proto",
+    "service": "node services",
     "test": "NODE_ENV=test ava ./**/*_test.js ./**/**/*_test.js",
     "test:watch": "nodemon --exec \"yarn test\""
   },
