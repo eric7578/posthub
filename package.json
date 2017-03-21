@@ -1,9 +1,6 @@
 {
   "name": "projecthub",
   "version": "0.0.0",
-  "bin": {
-    "projecthub": "./bin/projecthub.js"
-  },
   "scripts": {
     "service": "node services",
     "test": "NODE_ENV=test ava ./**/*_test.js ./**/**/*_test.js",
