@@ -6,6 +6,7 @@ module.exports = {
     connection: {
       filename: ':memory:'
     },
+    useNullAsDefault: true,
     migrations: {
       directory: path.resolve(__dirname, 'migrations'),
       tableName: 'knex_migrations'
