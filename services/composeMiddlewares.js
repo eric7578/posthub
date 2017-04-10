@@ -15,7 +15,7 @@ module.exports = (middlewares, context = null) => {
     const promise = middlewares.reduce((next, middleware) => {
       const middlewareArgs = args.concat(next)
       return middleware.apply(context, middlewareArgs)
-    }, Promise.resolve())
+    }, () => Promise.resolve())
 
     return await promise
   }

@@ -4,7 +4,7 @@ const composeMiddlewares = require('./composeMiddlewares')
 test('middlewares execution order', async t => {
   async function middleware_1(request, next) {
     request.push(0)
-    await next
+    await next()
     request.push(3)
   }
 
@@ -27,7 +27,7 @@ test('middleware execution context', async t => {
   const context = {}
   async function middleware(request, next) {
     t.is(this, context)
-    await next
+    await next()
   }
 
   const composed = composeMiddlewares([middleware], context)

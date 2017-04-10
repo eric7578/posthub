@@ -30,7 +30,7 @@
     "log4js": "^1.1.1",
     "mysql": "^2.13.0",
     "mz": "^2.6.0",
-    "sinon": "^1.17.7"
+    "sinon": "^2.1.0"
   },
   "repository": "git+https://github.com/eric7578/swarm.git",
   "author": "ericyan <eric7578@gmail.com>",

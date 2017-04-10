@@ -1,21 +1,24 @@
-const READ = 0
-const EDIT = 1
-const REMOVE = 2
+const assert = require('assert')
+const bitop = require('../../utils/bitop')
 
-function exchangeToken() {
-  return async function (request, next) {
-    await next
+const PERMISSION_DENIED = 'permission denied'
+
+module.exports = (repository, permits) => {
+  const { permission } = repository
+  if (!Array.isArray(permits)) {
+    permits = Array.prototype.slice.call(arguments, 1)
+  }
+
+  return {
+    async grant(request, next) {
+      const commit = await next()
+      await permission.update(request.userId, commit.commitId, permits)
+      return commit
+    },
+    async isGranted(request, next) {
+      const isGranted = await permission.update(request.userId, request.commitId, permits)
+      assert(isGranted, PERMISSION_DENIED)
+      return await next()
+    }
   }
 }
-
-function ensure(...permissions) {
-  return async function (request, next) {
-
-    await next
-  }
-}
-
-exports.READER = [READ]
-exports.EDITOR = [READ, EDIT]
-exports.CREATOR = [READ, EDIT, REMOVE]
-exports.ensure = ensure
