@@ -9,18 +9,15 @@ module.exports = class Pluggable {
     assert.equal(typeof event, 'string')
     assert.equal(typeof handler, 'function')
 
-    let handlers = this._plugins.get(event)
-
-    if (!handlers) {
-      handlers = new Set()
-      this._plugins.set(event, handler)
+    if (!this._plugins.has(event)) {
+      this._plugins.set(event, new Set())
     }
 
+    const handlers = this._plugins.get(event)
     handlers.add(handler)
   }
 
   async apply(event, ...args) {
-    console.log(event)
     const handlers = this._plugins.get(event)
     if (handlers && handlers.size > 0) {
       for (let handler of handlers) {
