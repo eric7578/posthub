@@ -1,7 +1,7 @@
 const test = require('ava')
 
-const knex = require('../../repository/knex')
-const repository = require('../../repository')
+const knex = require('../repository/knex')
+const repository = require('../repository')
 
 const commit = require('./commit')(repository)
 const rebase = require('./rebase')(repository)
