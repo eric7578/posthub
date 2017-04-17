@@ -55,3 +55,23 @@ test('attach module to command', async t => {
   t.true(beforeExecute.calledBefore(module.method))
   t.true(module.method.calledBefore(afterExecute))
 })
+
+test(`command's before-execute, after-execute should be hook to all commands`, async t => {
+  const command = new Command()
+  const method = spy()
+  const module = {
+    method: spy()
+  }
+  const beforeExecute = spy()
+  const afterExecute = spy()
+
+  command.attach('method', method)
+  command.attach('module', module)
+  command.plugin('before-execute', beforeExecute)
+  command.plugin('after-execute', afterExecute)
+  await command.method()
+  await command.module.method()
+
+  t.true(beforeExecute.calledTwice)
+  t.true(afterExecute.calledTwice)
+})
