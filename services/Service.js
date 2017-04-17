@@ -2,54 +2,59 @@ const fs = require('mz/fs')
 const path = require('path')
 const assert = require('assert')
 const Pluggable = require('./Pluggable')
-const Commands = require('./Commands')
+const Command = require('./Command')
 const globAsync = require('../utils/globAsync')
 
-class Service extends Pluggable {
-  constructor(config, repository) {
+module.exports = class Service extends Pluggable {
+  constructor(configs) {
     super()
-    this._repository = repository
-    this._commands = new Commands()
-    this._entry(config)
+    this._command = new Command()
+    process.nextTick(() => this._entry(configs))
   }
 
-  async _entry(config) {
+  get command() {
+    return this._command
+  }
+
+  async _entry(configs = {}) {
     try {
       await this.apply('entry', this)
-      await this._loadCommands()
-      await this._loadPlugins()
+      await this._mountCommands(configs)
+      await this._mountPlugins(configs)
       await this.apply('done', this)
     } catch (err) {
       console.log(err.stack)
     }
-
   }
 
-  async _loadCommands() {
-    const commandsDir = path.resolve(__dirname, './commands')
-    const commandFiles = await globAsync(path.resolve(commandsDir, '!(*_test).js'))
-
-    for (let commandFile of commandFiles) {
-      const { name } = path.parse(commandFile)
-      const module = require(commandFile)(this._repository)
-      await this._commands.attachMethod(name, module)
+  async _mountCommands(configs) {
+    if (configs.commands) {
+      for (let name in configs.commands) {
+        const command = configs.commands[name]
+        const commandModule = command(this._repository)
+        await this._command.attach(name, commandModule)
+      }
     }
 
     await this.apply('after-commands', this)
   }
 
-  async _loadPlugins() {
-    const pluginsDir = path.resolve(__dirname, './plugins')
-    const pluginFiles = await globAsync(path.resolve(pluginsDir, '!(*_test).js'))
+  async _mountPlugins(configs) {
+    if (configs.plugins) {
+      for (let pluginGen of configs.plugins) {
+        const Plugin = pluginGen(this._repository)
 
-    for (let pluginFile of pluginFiles) {
-      const Plugin = require(pluginFile)(this._repository)
-      // const plugin = new Plugin(this)
-      // await plugin.apply(this)
+        let plugin
+        try {
+          plugin = Plugin()
+        } catch (err) {
+          plugin = new Plugin()
+        }
+
+        plugin.apply(this)
+      }
     }
 
     await this.apply('after-plugins', this)
   }
 }
-
-var s = new Service({}, {})
