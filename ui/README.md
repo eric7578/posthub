@@ -1,15 +1,21 @@
 # projecthub-ui
 
+> web ui for projecthub
+
+## Build Setup
+
 ``` bash
 # install dependencies
-yarn install
+npm install
 
-# serve in dev mode, with hot reload at localhost:8080
-yarn dev
+# serve with hot reload at localhost:8080
+npm run dev
 
-# build for production
-yarn build
+# build for production with minification
+npm run build
 
-# serve in production mode
-yarn start
+# build for production and view the bundle analyzer report
+npm run build --report
 ```
+
+For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
