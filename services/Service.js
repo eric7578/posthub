@@ -1,22 +1,18 @@
-const fs = require('mz/fs')
-const path = require('path')
-const assert = require('assert')
 const Pluggable = require('./Pluggable')
 const Command = require('./Command')
-const globAsync = require('../utils/globAsync')
 
 module.exports = class Service extends Pluggable {
-  constructor(configs) {
+  constructor (configs) {
     super()
     this._command = new Command()
     process.nextTick(() => this._entry(configs))
   }
 
-  get command() {
+  get command () {
     return this._command
   }
 
-  async _entry(configs = {}) {
+  async _entry (configs = {}) {
     try {
       await this.apply('entry', this)
       await this._mountCommands(configs)
@@ -27,7 +23,7 @@ module.exports = class Service extends Pluggable {
     }
   }
 
-  async _mountCommands(configs) {
+  async _mountCommands (configs) {
     if (configs.commands) {
       for (let name in configs.commands) {
         const command = configs.commands[name]
@@ -39,7 +35,7 @@ module.exports = class Service extends Pluggable {
     await this.apply('after-commands', this)
   }
 
-  async _mountPlugins(configs) {
+  async _mountPlugins (configs) {
     if (configs.plugins) {
       for (let pluginGen of configs.plugins) {
         const Plugin = pluginGen(this._repository)

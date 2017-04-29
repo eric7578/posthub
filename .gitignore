@@ -1,7 +1,11 @@
+.DS_Store
+
 # Logs
 logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Runtime data
 pids
@@ -50,9 +54,5 @@ dist
 # public folder
 public/javascripts
 
-# test db
-:memory
-
-# compiled thrift
-thrift/index.js
-thrift/lib/*.js
+# ui
+ui/dist/

@@ -1,6 +1,6 @@
 const composeMiddlewares = require('./composeMiddlewares')
 
-module.exports = function composeRpcService(service, middlewares = []) {
+module.exports = function composeRpcService (service, middlewares = []) {
   return Object
     .entries(service)
     .reduce((ret, [methodName, method]) => {
@@ -12,7 +12,7 @@ module.exports = function composeRpcService(service, middlewares = []) {
     }, {})
 }
 
-function decorateServiceMethod(service, method) {
+function decorateServiceMethod (service, method) {
   return async function (call, callback) {
     try {
       const result = await method.call(service, call.request)

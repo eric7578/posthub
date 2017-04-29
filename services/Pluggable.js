@@ -1,11 +1,11 @@
 const assert = require('assert')
 
 module.exports = class Pluggable {
-  constructor() {
+  constructor () {
     this._plugins = new Map()
   }
 
-  plugin(event, handler) {
+  plugin (event, handler) {
     assert.equal(typeof event, 'string')
     assert.equal(typeof handler, 'function')
 
@@ -17,7 +17,7 @@ module.exports = class Pluggable {
     handlers.add(handler)
   }
 
-  async apply(event, ...args) {
+  async apply (event, ...args) {
     const handlers = this._plugins.get(event)
     if (handlers && handlers.size > 0) {
       for (let handler of handlers) {
@@ -26,7 +26,7 @@ module.exports = class Pluggable {
     }
   }
 
-  async applyImmediate(event, ...args) {
+  async applyImmediate (event, ...args) {
     const handlers = this._plugins.get(event)
     if (handlers && handlers.size > 0) {
       const promises = Array.from(handlers).map(handler => {

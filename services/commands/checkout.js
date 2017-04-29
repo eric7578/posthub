@@ -6,19 +6,19 @@ module.exports = repository => {
   const { entity } = repository
 
   return {
-    async checkout(request) {
-      const { token, commitId } = request
+    async checkout (request) {
+      const { commitId } = request
       return await entity.findById(commitId)
     },
-    async checkoutParent(request) {
-      const { token, commitId } = request
+    async checkoutParent (request) {
+      const { commitId } = request
       const found = await entity.findById(commitId)
       assert(found, COMMIT_NOT_FOUND)
 
       return await entity.findById(found.parentId)
     },
-    async checkoutChildren(request) {
-      const { token, commitId } = request
+    async checkoutChildren (request) {
+      const { commitId } = request
       const parent = await entity.findById(commitId)
       assert(parent, COMMIT_NOT_FOUND)
 

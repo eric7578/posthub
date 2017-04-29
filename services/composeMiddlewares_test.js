@@ -2,21 +2,21 @@ const test = require('ava')
 const composeMiddlewares = require('./composeMiddlewares')
 
 test('middlewares execution order', async t => {
-  async function middleware_1(request, next) {
+  async function middleware1 (request, next) {
     request.push(0)
     await next()
     request.push(3)
   }
 
-  async function middleware_2(request, next) {
+  async function middleware2 (request, next) {
     request.push(1)
   }
 
-  async function middleware_3(request, next) {
+  async function middleware3 (request, next) {
     request.push(2)
   }
 
-  const composed = composeMiddlewares([middleware_1, middleware_2, middleware_3])
+  const composed = composeMiddlewares([middleware1, middleware2, middleware3])
   const result = []
   await composed(result)
 
@@ -25,7 +25,7 @@ test('middlewares execution order', async t => {
 
 test('middleware execution context', async t => {
   const context = {}
-  async function middleware(request, next) {
+  async function middleware (request, next) {
     t.is(this, context)
     await next()
   }

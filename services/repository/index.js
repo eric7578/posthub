@@ -7,10 +7,10 @@ module.exports = fs
   .filter(filepath => {
     const { ext, name } = path.parse(filepath)
     return (
-      ext === '.js'
-      && name !== 'index' && name !== 'knex' && name !== 'knexfile'
-      && name.indexOf('_test') < 0
-      && fs.statSync(filepath).isFile()
+      ext === '.js' &&
+      name !== 'index' && name !== 'knex' && name !== 'knexfile' &&
+      name.indexOf('_test') < 0 &&
+      fs.statSync(filepath).isFile()
     )
   })
   .reduce((exports, filepath) => {

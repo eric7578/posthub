@@ -1,22 +1,22 @@
 const Pluggable = require('./Pluggable')
 
 class Execute extends Pluggable {
-  constrctor(name, args) {
+  constrctor (name, args) {
     this._name = name
     this._arguments = Array.isArray(args) ? args : [args]
   }
 
-  get name() {
+  get name () {
     return this._name
   }
 
-  get arguments() {
+  get arguments () {
     return this._args
   }
 }
 
 module.exports = class Command extends Pluggable {
-  attach(name, module) {
+  attach (name, module) {
     if (typeof module === 'function') {
       this._attachMethod(name, module)
     } else if (typeof module === 'object') {
@@ -24,7 +24,7 @@ module.exports = class Command extends Pluggable {
     }
   }
 
-  _attachMethod(methodName, method) {
+  _attachMethod (methodName, method) {
     // turn commands into instance methods
     Object.defineProperty(this, methodName, {
       enumerable: true,
@@ -33,7 +33,7 @@ module.exports = class Command extends Pluggable {
     })
   }
 
-  _attachModule(moduleName, module) {
+  _attachModule (moduleName, module) {
     this[moduleName] = Object
       .entries(module)
       .reduce((wrapper, [methodName, method]) => {
@@ -42,7 +42,7 @@ module.exports = class Command extends Pluggable {
       }, {})
   }
 
-  _wrapMethod(methodName, method) {
+  _wrapMethod (methodName, method) {
     return async (...args) => {
       const execute = new Execute(methodName, args)
 

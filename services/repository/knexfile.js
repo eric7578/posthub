@@ -11,5 +11,14 @@ module.exports = {
       directory: path.resolve(__dirname, 'migrations'),
       tableName: 'knex_migrations'
     }
+  },
+  development: {
+    client: 'mysql',
+    connection: {
+      host: '127.0.0.1',
+      user: 'user',
+      password: 'password',
+      database: 'default'
+    }
   }
 }
