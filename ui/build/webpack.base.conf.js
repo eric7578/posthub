@@ -1,15 +1,12 @@
-var path = require('path')
-var utils = require('./utils')
-var config = require('../config')
-var vueLoaderConfig = require('./vue-loader.conf')
-
-function resolve (dir) {
-  return path.join(__dirname, '..', dir)
-}
+const path = require('path')
+const utils = require('./utils')
+const config = require('../config')
+const vueLoaderConfig = require('./vue-loader.conf')
+const resolve = require('./resolve')
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    app: resolve('src/main.js')
   },
   output: {
     path: config.build.assetsRoot,

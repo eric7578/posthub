@@ -7,7 +7,6 @@
     "services": "node services",
     "http:start": "node http/bin/www",
     "ui:dev": "node ui/build/dev-server.js",
-    "ui:start": "node ui/build/dev-server.js",
     "ui:build": "node ui/build/build.js",
     "lint": "eslint --ext .js,.vue ."
   },
