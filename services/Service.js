@@ -2,51 +2,35 @@ const Pluggable = require('./Pluggable')
 const Command = require('./Command')
 
 module.exports = class Service extends Pluggable {
-  constructor (configs) {
+  constructor (configs = {}) {
     super()
-    this._command = new Command()
-    process.nextTick(() => this._entry(configs))
+    this._configs = configs
   }
 
   get command () {
     return this._command
   }
 
-  async _entry (configs = {}) {
+  async run () {
     try {
       await this.apply('entry', this)
-      await this._mountCommands(configs)
-      await this._mountPlugins(configs)
+      await this._mountCommands()
+      await this._mountPlugins()
       await this.apply('done', this)
     } catch (err) {
       console.log(err.stack)
     }
   }
 
-  async _mountCommands (configs) {
-    if (configs.commands) {
-      for (let name in configs.commands) {
-        const command = configs.commands[name]
-        const commandModule = command(this._repository)
-        await this._command.attach(name, commandModule)
-      }
-    }
-
+  async _mountCommands () {
+    this._command = new Command(this._configs)
+    this._command.attach()
     await this.apply('after-commands', this)
   }
 
-  async _mountPlugins (configs) {
-    if (configs.plugins) {
-      for (let pluginGen of configs.plugins) {
-        const Plugin = pluginGen(this._repository)
-
-        let plugin
-        try {
-          plugin = Plugin()
-        } catch (err) {
-          plugin = new Plugin()
-        }
-
+  async _mountPlugins () {
+    if (this._configs.plugins) {
+      for (let plugin of this._configs.plugins) {
         plugin.apply(this)
       }
     }

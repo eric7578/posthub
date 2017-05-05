@@ -1,3 +1,5 @@
+const assert = require('assert')
+const path = require('path')
 const Pluggable = require('./Pluggable')
 
 class Execute extends Pluggable {
@@ -16,11 +18,19 @@ class Execute extends Pluggable {
 }
 
 module.exports = class Command extends Pluggable {
-  attach (name, module) {
-    if (typeof module === 'function') {
-      this._attachMethod(name, module)
-    } else if (typeof module === 'object') {
-      this._attachModule(name, module)
+  constructor (configs) {
+    super()
+    this._commands = configs.commands
+  }
+
+  attach () {
+    for (let name in this._commands) {
+      const module = this._commands[name]
+      if (typeof module === 'function') {
+        this._attachMethod(name, module)
+      } else if (typeof module === 'object') {
+        this._attachModule(name, module)
+      }
     }
   }
 

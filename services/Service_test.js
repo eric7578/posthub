@@ -13,6 +13,7 @@ test.cb('service initialize orders', t => {
   service.plugin('after-commands', afterCommands)
   service.plugin('after-plugins', afterPlugins)
   service.plugin('done', done)
+  service.run()
 
   service.plugin('done', () => {
     t.true(entry.calledBefore(afterCommands))
@@ -24,23 +25,6 @@ test.cb('service initialize orders', t => {
     t.true(afterPlugins.calledWithExactly(service))
     t.true(done.calledWithExactly(service))
 
-    t.end()
-  })
-})
-
-test.cb('mounting plugins to service', t => {
-  const service = new Service({
-    commands: {
-      method: repository => () => {},
-      module: repository => ({
-        moduleMethod: () => {}
-      })
-    }
-  })
-
-  service.plugin('done', service => {
-    t.is(typeof service.command.method, 'function')
-    t.is(typeof service.command.module.moduleMethod, 'function')
     t.end()
   })
 })
