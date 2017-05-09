@@ -3,15 +3,24 @@ const assert = require('assert')
 const PARENT_NOT_FOUND = 'parent not found'
 
 module.exports = repository => async request => {
-  const { entity } = repository
+  const { Entity } = repository.entity
   const { title, parentId } = request
+  let entity
 
   if (request.hasOwnProperty('parentId')) {
-    const parent = await entity.findById(parentId)
+    const parent = await Entity.findById(parentId)
     assert(parent, PARENT_NOT_FOUND)
 
-    return await entity.create(title, parent.id, parent.level + 1)
+    entity = await Entity.create({
+      title, 
+      parentId: parent.id,
+      level: parent.level + 1
+    })
   } else {
-    return await entity.createRoot(title)
+    entity = await Entity.create({
+      title
+    })
   }
+
+  return entity.toJSON()
 }

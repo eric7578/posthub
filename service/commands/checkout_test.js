@@ -1,6 +1,5 @@
 const test = require('ava')
-
-const knex = require('../repository/knex')
+const mongoose = require('../repository/mongoose')
 const repository = require('../repository')
 
 const commit = require('./commit')(repository)
@@ -9,12 +8,10 @@ const { checkout, checkoutParent, checkoutChildren } = require('./checkout')(rep
 let root, child
 
 test.before(async t => {
-  await knex.migrate.latest()
+  await mongoose.reset()
   root = await commit({ title: 'root commit' })
   child = await commit({ title: 'child commit', parentId: root.id })
 })
-
-test.after(t => knex.migrate.rollback())
 
 test.serial('checkout exist node', async t => {
   const found = await checkout({ commitId: child.id })
@@ -22,7 +19,9 @@ test.serial('checkout exist node', async t => {
 })
 
 test.serial('checkout inexist node', async t => {
-  const found = await checkout({ commitId: 0 })
+  const found = await checkout({
+    commitId: new require('mongoose').Schema.Types.ObjectId()
+  })
   t.falsy(found)
 })
 
@@ -38,8 +37,5 @@ test.serial(`checkout root node's parent`, async t => {
 
 test.serial(`checkout parent's children`, async t => {
   const children = await checkoutChildren({ commitId: root.id })
-  t.deepEqual(children, {
-    length: 1,
-    nodes: [child]
-  })
+  t.deepEqual(children, [child])
 })
