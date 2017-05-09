@@ -56,3 +56,6 @@ public/javascripts
 
 # ui
 ui/dist/
+
+# ide
+.vscode
